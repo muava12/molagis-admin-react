@@ -1,4 +1,6 @@
 import { UntitledLogo } from "@/components/foundations/logo/untitledui-logo";
+import { UntitledLogoMinimal } from "@/components/foundations/logo/untitledui-logo-minimal";
+import { AvatarLabelGroup } from "@/components/base/avatar/avatar-label-group";
 import { MobileNavigationHeader } from "../base-components/mobile-header";
 import { NavAccountCard } from "../base-components/nav-account-card";
 import { NavItemBase } from "../base-components/nav-item";
@@ -38,9 +40,7 @@ export const SidebarNavigationSectionsSubheadings = ({
                 {!collapsed && <UntitledLogo className="h-8" />}
                 {collapsed && (
                     <div className="flex justify-center">
-                        <div className="w-8 h-8 bg-brand-solid rounded-lg flex items-center justify-center">
-                            <span className="text-white font-bold text-sm">U</span>
-                        </div>
+                        <UntitledLogoMinimal className="w-8 h-8" />
                     </div>
                 )}
             </div>
@@ -93,7 +93,14 @@ export const SidebarNavigationSectionsSubheadings = ({
                 {!collapsed && <NavAccountCard />}
                 {collapsed && (
                     <div className="flex justify-center">
-                        <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+                        <AvatarLabelGroup
+                            size="md"
+                            src="https://www.untitledui.com/images/avatars/olivia-rhye?fm=webp&q=80"
+                            title=""
+                            subtitle=""
+                            status="online"
+                            className="w-8 h-8"
+                        />
                     </div>
                 )}
             </div>
