@@ -9,9 +9,11 @@ interface SidebarNavigationSectionsSubheadingsProps {
     activeUrl?: string;
     /** List of items to display. */
     items: Array<{ label: string; items: NavItemType[] }>;
+    /** List of items to display in the footer. */
+    footerItems?: NavItemType[];
 }
 
-export const SidebarNavigationSectionsSubheadings = ({ activeUrl = "/", items }: SidebarNavigationSectionsSubheadingsProps) => {
+export const SidebarNavigationSectionsSubheadings = ({ activeUrl = "/", items, footerItems }: SidebarNavigationSectionsSubheadingsProps) => {
     const MAIN_SIDEBAR_WIDTH = 292;
 
     const content = (
@@ -47,6 +49,17 @@ export const SidebarNavigationSectionsSubheadings = ({ activeUrl = "/", items }:
             </ul>
 
             <div className="mt-auto flex flex-col gap-5 px-2 py-4 lg:gap-6 lg:px-4 lg:py-4">
+                {footerItems && (
+                    <ul className="px-4 pb-5">
+                        {footerItems.map((item) => (
+                            <li key={item.label} className="py-0.5">
+                                <NavItemBase icon={item.icon} href={item.href} badge={item.badge} type="link" current={item.href === activeUrl}>
+                                    {item.label}
+                                </NavItemBase>
+                            </li>
+                        ))}
+                    </ul>
+                )}
                 <NavAccountCard />
             </div>
         </aside>
