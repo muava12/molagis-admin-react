@@ -165,135 +165,145 @@ export const CustomersPage = () => {
     }
 
     return (
-        <div className="p-6">
-            <div className="mb-6 flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Customers</h1>
-                    <p className="text-gray-600">Manage your customer database</p>
-                </div>
-                <Button
-                    onClick={() => handleOpenModal()}
-                    className="flex items-center gap-2"
-                    iconLeading={Plus}
-                >
-                    Add Customer
-                </Button>
-            </div>
-
-            {error && (
-                <div className="mb-4 rounded-lg bg-red-50 p-4 text-red-700">
-                    {error}
-                    <button 
-                        onClick={() => setError(null)}
-                        className="ml-2 text-red-500 hover:text-red-700"
+        <div className="flex flex-col h-full">
+            {/* Sticky Header */}
+            <div className="sticky top-0 z-10 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Customers</h1>
+                        <p className="text-gray-600 dark:text-gray-400">Manage your customer database</p>
+                    </div>
+                    <Button
+                        onClick={() => handleOpenModal()}
+                        className="flex items-center gap-2"
+                        iconLeading={Plus}
                     >
-                        ×
-                    </button>
+                        Add Customer
+                    </Button>
                 </div>
-            )}
 
-            <TableCard.Root>
-                <Table>
-                    <Table.Header>
-                        <Table.Head label="Name" />
-                        <Table.Head label="Contact" />
-                        <Table.Head label="Address" />
-                        <Table.Head label="Shipping Cost" />
-                        <Table.Head label="Date Created" />
-                        <Table.Head label="Actions" />
-                    </Table.Header>
-                    <Table.Body>
-                        {customers.map((customer) => (
-                            <Table.Row key={customer.id}>
-                                <Table.Cell>
-                                    <div className="text-sm font-medium text-gray-900">
-                                        {customer.nama}
-                                    </div>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <div className="text-sm text-gray-900">
-                                        {customer.telepon && (
-                                            <div className="flex items-center gap-1">
-                                                <Phone className="size-3" />
-                                                {customer.telepon}
-                                            </div>
-                                        )}
-                                        {customer.telepon_alt && (
-                                            <div className="flex items-center gap-1 text-gray-500">
-                                                <Phone className="size-3" />
-                                                {customer.telepon_alt}
-                                            </div>
-                                        )}
-                                    </div>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <div className="text-sm text-gray-900">
-                                        {customer.alamat && (
-                                            <div className="max-w-xs truncate">
-                                                {customer.alamat}
-                                            </div>
-                                        )}
-                                        {customer.maps && (
-                                            <a
-                                                href={customer.maps}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="flex items-center gap-1 text-blue-600 hover:text-blue-800"
-                                            >
-                                                <ArrowRight className="size-3" />
-                                                View Map
-                                            </a>
-                                        )}
-                                    </div>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    {formatCurrency(customer.ongkir)}
-                                </Table.Cell>
-                                <Table.Cell>
-                                    {formatDate(customer.date_created)}
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <div className="flex items-center gap-2">
-                                        <Button
-                                            size="sm"
-                                            color="tertiary"
-                                            onClick={() => handleOpenModal(customer)}
-                                            iconLeading={Edit01}
-                                        />
-                                        <Button
-                                            size="sm"
-                                            color="tertiary-destructive"
-                                            onClick={() => handleDelete(customer.id)}
-                                            iconLeading={Trash01}
-                                        />
-                                    </div>
-                                </Table.Cell>
-                            </Table.Row>
-                        ))}
-                    </Table.Body>
-                </Table>
-
-                {customers.length === 0 && !loading && (
-                    <div className="py-12 text-center">
-                        <div className="text-gray-500">No customers found</div>
-                        <Button
-                            onClick={() => handleOpenModal()}
-                            className="mt-4"
-                            color="secondary"
+                {error && (
+                    <div className="mt-4 rounded-lg bg-red-50 dark:bg-red-900/20 p-4 text-red-700 dark:text-red-400">
+                        {error}
+                        <button 
+                            onClick={() => setError(null)}
+                            className="ml-2 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                         >
-                            Add your first customer
-                        </Button>
+                            ×
+                        </button>
                     </div>
                 )}
-            </TableCard.Root>
+            </div>
+
+            {/* Scrollable Content */}
+            <div className="flex-1 overflow-auto px-6 py-4">
+                <TableCard.Root>
+                    <Table>
+                        <Table.Header>
+                            <Table.Head label="Name" />
+                            <Table.Head label="Contact" />
+                            <Table.Head label="Address" />
+                            <Table.Head label="Shipping Cost" />
+                            <Table.Head label="Date Created" />
+                            <Table.Head label="Actions" />
+                        </Table.Header>
+                        <Table.Body>
+                            {customers.map((customer) => (
+                                <Table.Row key={customer.id}>
+                                    <Table.Cell>
+                                        <div className="text-sm font-medium text-gray-900 dark:text-white">
+                                            {customer.nama}
+                                        </div>
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        <div className="text-sm text-gray-900 dark:text-gray-300">
+                                            {customer.telepon && (
+                                                <div className="flex items-center gap-1">
+                                                    <Phone className="size-3" />
+                                                    {customer.telepon}
+                                                </div>
+                                            )}
+                                            {customer.telepon_alt && (
+                                                <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
+                                                    <Phone className="size-3" />
+                                                    {customer.telepon_alt}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        <div className="text-sm text-gray-900 dark:text-gray-300">
+                                            {customer.alamat && (
+                                                <div className="max-w-xs truncate">
+                                                    {customer.alamat}
+                                                </div>
+                                            )}
+                                            {customer.maps && (
+                                                <a
+                                                    href={customer.maps}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="flex items-center gap-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                                                >
+                                                    <ArrowRight className="size-3" />
+                                                    View Map
+                                                </a>
+                                            )}
+                                        </div>
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        <span className="text-gray-900 dark:text-gray-300">
+                                            {formatCurrency(customer.ongkir)}
+                                        </span>
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        <span className="text-gray-900 dark:text-gray-300">
+                                            {formatDate(customer.date_created)}
+                                        </span>
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        <div className="flex items-center gap-2">
+                                            <Button
+                                                size="sm"
+                                                color="tertiary"
+                                                onClick={() => handleOpenModal(customer)}
+                                                iconLeading={Edit01}
+                                            />
+                                            <Button
+                                                size="sm"
+                                                color="tertiary-destructive"
+                                                onClick={() => handleDelete(customer.id)}
+                                                iconLeading={Trash01}
+                                            />
+                                        </div>
+                                    </Table.Cell>
+                                </Table.Row>
+                            ))}
+                        </Table.Body>
+                    </Table>
+
+                    {customers.length === 0 && !loading && (
+                        <div className="py-12 text-center">
+                            <div className="text-gray-500 dark:text-gray-400">No customers found</div>
+                            <Button
+                                onClick={() => handleOpenModal()}
+                                className="mt-4"
+                                color="secondary"
+                            >
+                                Add your first customer
+                            </Button>
+                        </div>
+                    )}
+                </TableCard.Root>
+            </div>
 
             {/* Customer Form Modal */}
             {isModalOpen && (
                 <ModalOverlay isOpen={isModalOpen}>
                     <Modal>
                         <Dialog>
-                            <div className="bg-white rounded-lg p-6 w-full max-w-md">
-                                <h2 className="text-lg font-semibold mb-4">
+                            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
+                                <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
                                     {editingCustomer ? "Edit Customer" : "Add New Customer"}
                                 </h2>
                                 

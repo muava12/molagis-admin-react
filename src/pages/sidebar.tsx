@@ -44,7 +44,18 @@ const footerNavItems: NavItemType[] = [
     },
 ];
 
-export const Sidebar = () => {
-    const location = useLocation();
-    return <SidebarNavigationSectionsSubheadings activeUrl={location.pathname} items={navItems} footerItems={footerNavItems} />;
+interface SidebarProps {
+    collapsed?: boolean;
 }
+
+export const Sidebar = ({ collapsed = false }: SidebarProps) => {
+    const location = useLocation();
+    return (
+        <SidebarNavigationSectionsSubheadings 
+            activeUrl={location.pathname} 
+            items={navItems} 
+            footerItems={footerNavItems}
+            collapsed={collapsed}
+        />
+    );
+};

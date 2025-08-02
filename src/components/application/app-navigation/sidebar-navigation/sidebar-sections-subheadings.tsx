@@ -11,10 +11,17 @@ interface SidebarNavigationSectionsSubheadingsProps {
     items: Array<{ label: string; items: NavItemType[] }>;
     /** List of items to display in the footer. */
     footerItems?: NavItemType[];
+    /** Whether the sidebar is collapsed. */
+    collapsed?: boolean;
 }
 
-export const SidebarNavigationSectionsSubheadings = ({ activeUrl = "/", items, footerItems }: SidebarNavigationSectionsSubheadingsProps) => {
-    const MAIN_SIDEBAR_WIDTH = 292;
+export const SidebarNavigationSectionsSubheadings = ({ 
+    activeUrl = "/", 
+    items, 
+    footerItems, 
+    collapsed = false 
+}: SidebarNavigationSectionsSubheadingsProps) => {
+    const MAIN_SIDEBAR_WIDTH = collapsed ? 64 : 292;
 
     const content = (
         <aside
@@ -23,23 +30,40 @@ export const SidebarNavigationSectionsSubheadings = ({ activeUrl = "/", items, f
                     "--width": `${MAIN_SIDEBAR_WIDTH}px`,
                 } as React.CSSProperties
             }
-            className="flex h-full w-full max-w-full flex-col justify-between overflow-auto border-secondary bg-primary pt-4 shadow-xs md:border-r lg:w-(--width) lg:rounded-xl lg:border lg:pt-5"
+            className={`flex h-full w-full max-w-full flex-col justify-between overflow-auto border-secondary bg-primary shadow-xs md:border-r lg:w-(--width) lg:rounded-xl lg:border transition-all duration-300 ${
+                collapsed ? 'pt-2 lg:pt-3' : 'pt-4 lg:pt-5'
+            }`}
         >
-            <div className="flex flex-col gap-5 px-4 lg:px-5">
-                <UntitledLogo className="h-8" />
+            <div className={`flex flex-col gap-5 ${collapsed ? 'px-2 lg:px-3' : 'px-4 lg:px-5'}`}>
+                {!collapsed && <UntitledLogo className="h-8" />}
+                {collapsed && (
+                    <div className="flex justify-center">
+                        <div className="w-8 h-8 bg-brand-solid rounded-lg flex items-center justify-center">
+                            <span className="text-white font-bold text-sm">U</span>
+                        </div>
+                    </div>
+                )}
             </div>
 
             <ul className="mt-8">
                 {items.map((group) => (
                     <li key={group.label}>
-                        <div className="px-5 pb-1">
-                            <p className="text-xs font-bold text-quaternary uppercase">{group.label}</p>
-                        </div>
-                        <ul className="px-4 pb-5">
+                        {!collapsed && (
+                            <div className="px-5 pb-1">
+                                <p className="text-xs font-bold text-quaternary uppercase">{group.label}</p>
+                            </div>
+                        )}
+                        <ul className={collapsed ? 'px-2 pb-5' : 'px-4 pb-5'}>
                             {group.items.map((item) => (
                                 <li key={item.label} className="py-0.5">
-                                    <NavItemBase icon={item.icon} href={item.href} badge={item.badge} type="link" current={item.href === activeUrl}>
-                                        {item.label}
+                                    <NavItemBase
+                                        icon={item.icon}
+                                        href={item.href}
+                                        badge={item.badge}
+                                        type="link"
+                                        current={item.href === activeUrl}
+                                    >
+                                        {!collapsed && item.label}
                                     </NavItemBase>
                                 </li>
                             ))}
@@ -48,19 +72,30 @@ export const SidebarNavigationSectionsSubheadings = ({ activeUrl = "/", items, f
                 ))}
             </ul>
 
-            <div className="mt-auto flex flex-col gap-5 px-2 py-4 lg:gap-6 lg:px-4 lg:py-4">
+            <div className={`mt-auto flex flex-col gap-5 py-4 ${collapsed ? 'px-1 lg:gap-4 lg:px-2' : 'px-2 lg:gap-6 lg:px-4'}`}>
                 {footerItems && (
-                    <ul className="px-4 pb-5">
+                    <ul className={collapsed ? 'px-2 pb-5' : 'px-4 pb-5'}>
                         {footerItems.map((item) => (
                             <li key={item.label} className="py-0.5">
-                                <NavItemBase icon={item.icon} href={item.href} badge={item.badge} type="link" current={item.href === activeUrl}>
-                                    {item.label}
+                                <NavItemBase
+                                    icon={item.icon}
+                                    href={item.href}
+                                    badge={item.badge}
+                                    type="link"
+                                    current={item.href === activeUrl}
+                                >
+                                    {!collapsed && item.label}
                                 </NavItemBase>
                             </li>
                         ))}
                     </ul>
                 )}
-                <NavAccountCard />
+                {!collapsed && <NavAccountCard />}
+                {collapsed && (
+                    <div className="flex justify-center">
+                        <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+                    </div>
+                )}
             </div>
         </aside>
     );
