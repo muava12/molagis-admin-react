@@ -1,0 +1,71 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "./"
+      ],
+      "alwaysAllow": [
+        "edit_file",
+        "read_text_file",
+        "read_media_file",
+        "read_multiple_files",
+        "list_directory",
+        "list_directory_with_sizes",
+        "directory_tree",
+        "search_files",
+        "get_file_info",
+        "list_allowed_directories"
+      ]
+    },
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--project-ref=oabyaiyxfcbjpfmxdcrq"
+      ],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "sbp_3fd6da9a71945d9d507cdfdaa2ade80ab47f84a7"
+      },
+      "disabled": false,
+      "alwaysAllow": [
+        "list_tables",
+        "list_edge_functions",
+        "execute_sql",
+        "list_extensions"
+      ]
+    },
+    "time": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-time"
+      ]
+    },
+    "postgrest": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-postgrest@latest",
+        "--apiUrl",
+        "https://oabyaiyxfcbjpfmxdcrq.supabase.co/rest/v1",
+        "--apiKey",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9hYnlhaXl4ZmNianBmbXhkY3JxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE1MjQ4OTYsImV4cCI6MjA2NzEwMDg5Nn0.Emsu3Q66d1JGXIjYqHKjh9z92yxO5kfN9zzHtGLVkxQ",
+        "--schema",
+        "public"
+      ],
+      "alwaysAllow": [],
+      "disabled": false
+    },
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "postgresql://postgres:MantabJiwa99@db.oabyaiyxfcbjpfmxdcrq.supabase.co:5432/postgres"
+      ]
+    }
+  }
+}
