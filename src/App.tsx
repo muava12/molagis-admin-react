@@ -29,8 +29,8 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="/dashboard" element={<AppLayout />}>
-          <Route index element={<DashboardPage />} />
+        <Route path="/" element={<AppLayout />}>
+          <Route path="dashboard" element={<DashboardPage />} />
           <Route path="customers" element={<CustomersPage />} />
           <Route path="orders" element={<OrdersPage />} />
           <Route path="finance" element={<FinancePage />} />
