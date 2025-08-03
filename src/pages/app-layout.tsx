@@ -1,45 +1,114 @@
-import { useState } from "react";
-import { Outlet } from "react-router";
-import { Sidebar } from "./sidebar";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { Button } from "@/components/base/buttons/button";
-import { Menu02, X } from "@untitledui/icons";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { BarChartSquare02, File05, PieChart03, Rows01, Users01, Settings01, LifeBuoy01 } from "@untitledui/icons";
+import { SimpleLayout, useSimpleLayout, type NavItem } from "@/components/application/app-navigation";
+import { BadgeWithDot } from "@/components/base/badges/badges";
+
+// Navigation items berdasarkan aplikasi yang ada
+const appNavItems: NavItem[] = [
+  {
+    id: "dashboard",
+    label: "Dashboard",
+    href: "/dashboard",
+    icon: BarChartSquare02,
+  },
+  {
+    id: "customers",
+    label: "Customers",
+    href: "/customers",
+    icon: Users01,
+  },
+  {
+    id: "orders",
+    label: "Orders",
+    href: "/orders",
+    icon: Rows01,
+  },
+  {
+    id: "finance",
+    label: "Finance",
+    href: "/finance",
+    icon: PieChart03,
+  },
+  {
+    id: "reports",
+    label: "Reports",
+    href: "/reports",
+    icon: File05,
+  },
+  {
+    id: "loading-demo",
+    label: "Loading Demo",
+    href: "/loading-demo",
+    icon: ({ className }) => (
+      <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+      </svg>
+    ),
+  },
+];
+
+const appFooterItems: NavItem[] = [
+  {
+    id: "support",
+    label: "Support",
+    href: "/support",
+    icon: LifeBuoy01,
+  },
+  {
+    id: "settings",
+    label: "Settings",
+    href: "/settings",
+    icon: Settings01,
+    badge: <BadgeWithDot color="success" type="modern" size="sm">Online</BadgeWithDot>,
+  },
+];
 
 export const AppLayout = () => {
-    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  // Determine active item based on current route
+  const getActiveItemId = (pathname: string) => {
+    if (pathname.startsWith("/dashboard")) return "dashboard";
+    if (pathname.startsWith("/customers")) return "customers";
+    if (pathname.startsWith("/orders")) return "orders";
+    if (pathname.startsWith("/finance")) return "finance";
+    if (pathname.startsWith("/reports")) return "reports";
+    if (pathname.startsWith("/settings")) return "settings";
+    if (pathname.startsWith("/support")) return "support";
+    return "dashboard"; // default
+  };
 
-    return (
-        <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-            {/* Sidebar */}
-            <div className={`transition-all duration-300 ${sidebarCollapsed ? 'w-16' : 'w-72'}`}>
-                <Sidebar collapsed={sidebarCollapsed} />
-            </div>
+  const { handleNavItemClick } = useSimpleLayout(getActiveItemId(location.pathname));
 
-            {/* Main content area */}
-            <div className="flex-1 flex flex-col overflow-hidden">
-                {/* Top header bar */}
-                <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        {/* Sidebar toggle button */}
-                        <Button
-                            color="tertiary"
-                            size="sm"
-                            iconLeading={sidebarCollapsed ? Menu02 : X}
-                            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                            aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-                        />
-                    </div>
+  const handleItemClick = (item: NavItem) => {
+    handleNavItemClick(item);
+    if (item.href) {
+      navigate(item.href);
+    }
+  };
 
-                    <div className="flex items-center gap-3">
-                        <ThemeToggle />
-                    </div>
-                </header>
+  // Get current page title
+  const getCurrentPageTitle = () => {
+    const activeId = getActiveItemId(location.pathname);
+    const activeItem = [...appNavItems, ...appFooterItems].find(item => item.id === activeId);
+    return activeItem?.label || "Dashboard";
+  };
 
-                {/* Main content */}
-                <main className="flex-1 overflow-auto">
-                    <Outlet />
-                </main>
-            </div>
+  return (
+    <SimpleLayout
+      navItems={appNavItems}
+      footerItems={appFooterItems}
+      activeItemId={getActiveItemId(location.pathname)}
+      onNavItemClick={handleItemClick}
+      headerContent={
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-fg-tertiary">Current:</span>
+          <span className="text-sm font-medium text-fg-primary">{getCurrentPageTitle()}</span>
         </div>
-    );
+      }
+    >
+      <Outlet />
+    </SimpleLayout>
+  );
 };

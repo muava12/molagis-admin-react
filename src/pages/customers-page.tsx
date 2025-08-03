@@ -202,9 +202,9 @@ export const CustomersPage = () => {
     // Memoized customer rows for better performance
     const customerRows = useMemo(() => {
         return paginatedData.data.map((customer) => (
-            <Table.Row key={customer.id}>
+            <Table.Row key={customer.id} className="hover:bg-primary_hover">
                 <Table.Cell>
-                    <div className="text-sm font-medium text-gray-900 dark:text-white">
+                    <div className="text-sm font-medium text-fg-primary">
                         {customer.nama}
                     </div>
                 </Table.Cell>
@@ -215,7 +215,7 @@ export const CustomersPage = () => {
                                 href={createWhatsAppLink(customer.telepon)}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center justify-center w-8 h-8 bg-green-500 hover:bg-green-600 rounded-full transition-colors"
+                                className="flex items-center justify-center w-8 h-8 bg-success-500 hover:bg-success-600 rounded-full transition-colors"
                                 title={`WhatsApp: ${customer.telepon}`}
                             >
                                 <MessageCircle02 className="size-4 text-white" />
@@ -226,7 +226,7 @@ export const CustomersPage = () => {
                                 href={createWhatsAppLink(customer.telepon_alt)}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center justify-center w-8 h-8 bg-green-400 hover:bg-green-500 rounded-full transition-colors"
+                                className="flex items-center justify-center w-8 h-8 bg-success-400 hover:bg-success-500 rounded-full transition-colors"
                                 title={`WhatsApp Alt: ${customer.telepon_alt}`}
                             >
                                 <MessageCircle02 className="size-4 text-white" />
@@ -237,7 +237,7 @@ export const CustomersPage = () => {
                                 href={createWhatsAppLink(customer.telepon_pemesan)}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center justify-center w-8 h-8 bg-blue-500 hover:bg-blue-600 rounded-full transition-colors"
+                                className="flex items-center justify-center w-8 h-8 bg-primary-500 hover:bg-primary-600 rounded-full transition-colors"
                                 title={`WhatsApp Pemesan: ${customer.telepon_pemesan}`}
                             >
                                 <MessageCircle02 className="size-4 text-white" />
@@ -246,7 +246,7 @@ export const CustomersPage = () => {
                     </div>
                 </Table.Cell>
                 <Table.Cell>
-                    <div className="text-sm text-gray-900 dark:text-gray-300">
+                    <div className="text-sm text-fg-secondary">
                         {customer.alamat && (
                             <div className="max-w-xs truncate">
                                 {customer.alamat}
@@ -257,7 +257,7 @@ export const CustomersPage = () => {
                                 href={customer.maps}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 text-xs"
+                                className="text-primary-600 hover:text-primary-800 text-xs"
                             >
                                 View Map →
                             </a>
@@ -265,7 +265,7 @@ export const CustomersPage = () => {
                     </div>
                 </Table.Cell>
                 <Table.Cell>
-                    <span className="text-gray-900 dark:text-gray-300">
+                    <span className="text-fg-primary">
                         {formatCurrency(customer.ongkir)}
                     </span>
                 </Table.Cell>
@@ -273,7 +273,7 @@ export const CustomersPage = () => {
                     <div className="flex items-center gap-2">
                         <Button
                             size="sm"
-                            color="tertiary"
+                            color="secondary"
                             onClick={() => handleOpenModal(customer)}
                             iconLeading={Edit01}
                         />
@@ -343,48 +343,104 @@ export const CustomersPage = () => {
     if (loading && paginatedData.data.length === 0) {
         return (
             <div className="flex h-screen items-center justify-center">
-                <div className="text-lg">Loading customers...</div>
+                <div className="space-y-4 text-center">
+                    <div className="flex justify-center">
+                        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+                    </div>
+                    <div className="text-lg text-fg-secondary">Loading customers...</div>
+                </div>
+            </div>
+        );
+    }
+
+    // Show skeleton loading for table rows when loading but data exists
+    if (loading && paginatedData.data.length > 0) {
+        return (
+            <div className="space-y-8">
+                {/* Header */}
+                <div className="flex items-center justify-between">
+                    <div>
+                        <div className="h-8 w-48 bg-secondary rounded animate-pulse"></div>
+                        <div className="mt-2 h-4 w-64 bg-secondary rounded animate-pulse"></div>
+                    </div>
+                    <div className="h-10 w-32 bg-secondary rounded animate-pulse"></div>
+                </div>
+
+                {/* Search and Error */}
+                <div className="space-y-4">
+                    <div className="h-10 w-80 bg-secondary rounded animate-pulse"></div>
+                </div>
+
+                {/* Table Section with Skeleton */}
+                <div className="rounded-xl border border-secondary bg-primary overflow-hidden">
+                    <div className="px-6 py-4 border-b border-secondary">
+                        <div className="h-6 w-40 bg-secondary rounded animate-pulse"></div>
+                    </div>
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead className="bg-secondary">
+                                <tr>
+                                    {Array.from({ length: 5 }).map((_, i) => (
+                                        <th key={i} className="px-6 py-3 text-left">
+                                            <div className="h-4 w-20 bg-primary rounded animate-pulse"></div>
+                                        </th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-secondary">
+                                {Array.from({ length: 5 }).map((_, rowIndex) => (
+                                    <tr key={rowIndex} className="hover:bg-primary_hover">
+                                        {Array.from({ length: 5 }).map((_, cellIndex) => (
+                                            <td key={cellIndex} className="px-6 py-4">
+                                                <div className="h-4 w-24 bg-secondary rounded animate-pulse"></div>
+                                            </td>
+                                        ))}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="flex flex-col h-full">
-            {/* Sticky Header */}
-            <div className="sticky top-0 z-10 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-4">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
-                        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Customers</h1>
-                        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
-                            {paginatedData.total} customers total
-                        </p>
-                    </div>
-                    <Button
-                        onClick={() => handleOpenModal()}
-                        className="flex items-center gap-2 w-full sm:w-auto justify-center"
-                        iconLeading={Plus}
-                    >
-                        Add Customer
-                    </Button>
+        <div className="space-y-8">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-3xl font-bold text-fg-primary">Customers</h1>
+                    <p className="mt-2 text-fg-secondary">
+                        Manage your customer database - {paginatedData.total} customers total
+                    </p>
                 </div>
+                <Button
+                    onClick={() => handleOpenModal()}
+                    color="primary"
+                    size="lg"
+                    iconLeading={Plus}
+                >
+                    Add Customer
+                </Button>
+            </div>
 
-                {/* Search Bar */}
-                <div className="mt-4">
-                    <Input
-                        placeholder="Search customers by name..."
-                        value={searchQuery}
-                        onChange={(value) => setSearchQuery(value)}
-                        icon={SearchLg}
-                        className="max-w-md"
-                    />
-                </div>
+            {/* Search and Error */}
+            <div className="space-y-4">
+                <Input
+                    placeholder="Search customers by name..."
+                    value={searchQuery}
+                    onChange={(value) => setSearchQuery(value)}
+                    icon={SearchLg}
+                    className="max-w-md"
+                />
 
                 {error && (
-                    <div className="mt-4 rounded-lg bg-red-50 dark:bg-red-900/20 p-4 text-red-700 dark:text-red-400">
+                    <div className="rounded-lg bg-error-50 border border-error-200 p-4 text-error-700">
                         {error}
-                        <button 
+                        <button
                             onClick={() => setError(null)}
-                            className="ml-2 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                            className="ml-2 text-error-500 hover:text-error-700"
                         >
                             ×
                         </button>
@@ -392,46 +448,49 @@ export const CustomersPage = () => {
                 )}
             </div>
 
-            {/* Scrollable Content */}
-            <div className="flex-1 overflow-auto px-4 sm:px-6 py-4">
+            {/* Table Section */}
+            <div className="rounded-xl border border-secondary bg-primary overflow-hidden">
+                <div className="px-6 py-4 border-b border-secondary">
+                    <h3 className="text-lg font-semibold text-fg-primary">
+                        Customer Directory
+                    </h3>
+                </div>
                 <div className="overflow-x-auto">
-                    <TableCard.Root>
-                        <Table>
-                            <Table.Header>
-                                <Table.Head label="Name" />
-                                <Table.Head label="WhatsApp" />
-                                <Table.Head label="Address" />
-                                <Table.Head label="Shipping Cost" />
-                                <Table.Head label="Actions" />
-                            </Table.Header>
-                            <Table.Body>
-                                {customerRows}
-                            </Table.Body>
-                        </Table>
+                    <Table>
+                        <Table.Header>
+                            <Table.Head label="Name" />
+                            <Table.Head label="WhatsApp" />
+                            <Table.Head label="Address" />
+                            <Table.Head label="Shipping Cost" />
+                            <Table.Head label="Actions" />
+                        </Table.Header>
+                        <Table.Body>
+                            {customerRows}
+                        </Table.Body>
+                    </Table>
 
-                        {paginatedData.data.length === 0 && !loading && (
-                            <div className="py-12 text-center">
-                                <div className="text-gray-500 dark:text-gray-400">
-                                    {searchQuery ? `No customers found for "${searchQuery}"` : "No customers found"}
-                                </div>
-                                {!searchQuery && (
-                                    <Button
-                                        onClick={() => handleOpenModal()}
-                                        className="mt-4"
-                                        color="secondary"
-                                    >
-                                        Add your first customer
-                                    </Button>
-                                )}
+                    {paginatedData.data.length === 0 && !loading && (
+                        <div className="py-12 text-center">
+                            <div className="text-fg-tertiary">
+                                {searchQuery ? `No customers found for "${searchQuery}"` : "No customers found"}
                             </div>
-                        )}
-                    </TableCard.Root>
+                            {!searchQuery && (
+                                <Button
+                                    onClick={() => handleOpenModal()}
+                                    className="mt-4"
+                                    color="secondary"
+                                >
+                                    Add your first customer
+                                </Button>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 {/* Pagination */}
                 {paginatedData.totalPages > 1 && (
-                    <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                    <div className="px-6 py-4 border-t border-secondary flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className="text-sm text-fg-tertiary">
                             Showing {((paginatedData.page - 1) * paginatedData.limit) + 1} to{' '}
                             {Math.min(paginatedData.page * paginatedData.limit, paginatedData.total)} of{' '}
                             {paginatedData.total} customers
@@ -448,8 +507,8 @@ export const CustomersPage = () => {
                 <ModalOverlay isOpen={isModalOpen}>
                     <Modal>
                         <Dialog>
-                            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-                                <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+                            <div className="bg-primary rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+                                <h2 className="text-lg font-semibold mb-4 text-fg-primary">
                                     {editingCustomer ? "Edit Customer" : "Add New Customer"}
                                 </h2>
                                 

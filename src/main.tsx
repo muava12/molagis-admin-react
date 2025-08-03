@@ -10,6 +10,7 @@ import { NotFound } from "@/pages/not-found";
 import { OrdersPage } from "@/pages/orders-page";
 import { ReportsPage } from "@/pages/reports-page";
 import { SettingsPage } from "@/pages/settings-page";
+import DemoNavigationPage from "@/pages/demo-navigation";
 import { AppLayout } from "@/pages/app-layout";
 import { RouteProvider } from "@/providers/router-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
@@ -22,6 +23,7 @@ createRoot(document.getElementById("root")!).render(
                 <RouteProvider>
                     <Routes>
                         <Route path="/" element={<LandingPage />} />
+                        <Route path="/demo" element={<DemoNavigationPage />} />
                         <Route path="/login" element={<LoginPage />} />
                         <Route element={<AppLayout />}>
                             <Route path="/dashboard" element={<DashboardPage />} />
