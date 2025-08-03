@@ -8,7 +8,7 @@ const appNavItems: NavItem[] = [
   {
     id: "dashboard",
     label: "Dashboard",
-    href: "/dashboard",
+    href: "",
     icon: BarChartSquare02,
   },
   {
@@ -69,13 +69,13 @@ export const AppLayout = () => {
   
   // Determine active item based on current route
   const getActiveItemId = (pathname: string) => {
-    if (pathname.startsWith("/dashboard")) return "dashboard";
-    if (pathname.startsWith("/customers")) return "customers";
-    if (pathname.startsWith("/orders")) return "orders";
-    if (pathname.startsWith("/finance")) return "finance";
-    if (pathname.startsWith("/reports")) return "reports";
-    if (pathname.startsWith("/settings")) return "settings";
-    if (pathname.startsWith("/support")) return "support";
+    if (pathname === "/dashboard" || pathname === "/dashboard/") return "dashboard";
+    if (pathname.startsWith("/dashboard/customers")) return "customers";
+    if (pathname.startsWith("/dashboard/orders")) return "orders";
+    if (pathname.startsWith("/dashboard/finance")) return "finance";
+    if (pathname.startsWith("/dashboard/reports")) return "reports";
+    if (pathname.startsWith("/dashboard/settings")) return "settings";
+    if (pathname.startsWith("/dashboard/support")) return "support";
     return "dashboard"; // default
   };
 
@@ -84,7 +84,7 @@ export const AppLayout = () => {
   const handleItemClick = (item: NavItem) => {
     handleNavItemClick(item);
     if (item.href) {
-      navigate(item.href);
+      navigate(`/dashboard${item.href}`);
     }
   };
 
