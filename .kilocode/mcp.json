@@ -43,7 +43,8 @@
         "get_advisors",
         "search_docs",
         "get_anon_key",
-        "get_project_url"
+        "get_project_url",
+        "execute_sql"
       ]
     },
     "time": {

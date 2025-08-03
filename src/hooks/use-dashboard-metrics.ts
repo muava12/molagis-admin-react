@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
-import { DashboardMetrics } from '@/types/dashboard';
+import { supabase } from '../lib/supabase';
+import { DashboardMetrics } from '../types/dashboard';
 
 export function useDashboardMetrics() {
   const [data, setData] = useState<DashboardMetrics | null>(null);
@@ -24,9 +24,14 @@ export function useDashboardMetrics() {
         if (revenueRes.error) throw revenueRes.error;
         if (customersRes.error) throw customersRes.error;
 
+        // Handle new JSON response format from get_active_customer_count
+        const activeCustomerCount = customersRes.data?.success
+          ? customersRes.data.data.count
+          : 0;
+
         setData({
           outstandingRevenue: revenueRes.data,
-          activeCustomerCount: customersRes.data
+          activeCustomerCount
         });
       } catch (err) {
         setError(err as Error);
