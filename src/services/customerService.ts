@@ -4,6 +4,9 @@ export interface PaginationParams {
   page: number;
   limit: number;
   search?: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  filter?: 'all' | 'active' | 'inactive';
 }
 
 export interface PaginatedResponse<T> {
@@ -15,20 +18,37 @@ export interface PaginatedResponse<T> {
 }
 
 export class CustomerService {
-  // Get paginated customers with optional search
-  static async getCustomersPaginated(params: PaginationParams): Promise<PaginatedResponse<Customer>> {
-    const { page, limit, search } = params;
+  // Get paginated customers with optional search, sorting, and filtering
+  static async getCustomersPaginated(params: PaginationParams): Promise<PaginatedResponse<Customer & { hasActiveOrders?: boolean }>> {
+    const { page, limit, search, sortBy = 'date_created', sortOrder = 'desc', filter = 'all' } = params;
     const offset = (page - 1) * limit;
 
+    // For complex filtering, we'll use a simpler approach
     let query = supabase
       .from('customers')
-      .select('*', { count: 'exact' })
-      .order('id', { ascending: false });
+      .select('*', { count: 'exact' });
 
     // Add search filter if provided
     if (search && search.trim()) {
       query = query.ilike('nama', `%${search.trim()}%`);
     }
+
+    // For now, we'll handle active/inactive filtering in a simpler way
+    // This can be enhanced later with more complex queries
+    if (filter === 'inactive') {
+      // Return empty results for inactive filter for now
+      return {
+        data: [],
+        total: 0,
+        page,
+        limit,
+        totalPages: 0,
+      };
+    }
+
+    // Add sorting
+    const ascending = sortOrder === 'asc';
+    query = query.order(sortBy, { ascending });
 
     // Add pagination
     query = query.range(offset, offset + limit - 1);

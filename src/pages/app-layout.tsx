@@ -1,42 +1,45 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { BarChartSquare02, File05, PieChart03, Rows01, Users01, Settings01, LifeBuoy01 } from "@untitledui/icons";
-import { SimpleLayout, useSimpleLayout, type NavItem } from "@/components/application/app-navigation";
+import {
+  BarChartSquare02,
+  File05,
+  PieChart03,
+  Rows01,
+  Users01,
+  Settings01,
+  LifeBuoy01
+} from "@untitledui/icons";
+import { SlimLayout } from "@/components/application/app-navigation/sidebar-slim-layout";
+import type { NavItemType } from "@/components/application/app-navigation/config";
 import { BadgeWithDot } from "@/components/base/badges/badges";
 
 // Navigation items berdasarkan aplikasi yang ada
-const appNavItems: NavItem[] = [
+const appNavItems: (NavItemType & { icon: React.FC<{ className?: string }> })[] = [
   {
-    id: "dashboard",
     label: "Dashboard",
     href: "/dashboard",
     icon: BarChartSquare02,
   },
   {
-    id: "customers",
     label: "Customers",
     href: "/customers",
     icon: Users01,
   },
   {
-    id: "orders",
     label: "Orders",
     href: "/orders",
     icon: Rows01,
   },
   {
-    id: "finance",
     label: "Finance",
     href: "/finance",
     icon: PieChart03,
   },
   {
-    id: "reports",
     label: "Reports",
     href: "/reports",
     icon: File05,
   },
   {
-    id: "loading-demo",
     label: "Loading Demo",
     href: "/loading-demo",
     icon: ({ className }) => (
@@ -47,15 +50,13 @@ const appNavItems: NavItem[] = [
   },
 ];
 
-const appFooterItems: NavItem[] = [
+const appFooterItems: (NavItemType & { icon: React.FC<{ className?: string }> })[] = [
   {
-    id: "support",
     label: "Support",
     href: "/support",
     icon: LifeBuoy01,
   },
   {
-    id: "settings",
     label: "Settings",
     href: "/settings",
     icon: Settings01,
@@ -67,22 +68,7 @@ export const AppLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   
-  // Determine active item based on current route
-  const getActiveItemId = (pathname: string) => {
-    if (pathname === "/dashboard" || pathname === "/") return "dashboard";
-    if (pathname.startsWith("/customers")) return "customers";
-    if (pathname.startsWith("/orders")) return "orders";
-    if (pathname.startsWith("/finance")) return "finance";
-    if (pathname.startsWith("/reports")) return "reports";
-    if (pathname.startsWith("/settings")) return "settings";
-    if (pathname.startsWith("/support")) return "support";
-    return "dashboard"; // default
-  };
-
-  const { handleNavItemClick } = useSimpleLayout(getActiveItemId(location.pathname));
-
-  const handleItemClick = (item: NavItem) => {
-    handleNavItemClick(item);
+  const handleItemClick = (item: NavItemType) => {
     if (item.href) {
       navigate(item.href);
     }
@@ -90,16 +76,17 @@ export const AppLayout = () => {
 
   // Get current page title
   const getCurrentPageTitle = () => {
-    const activeId = getActiveItemId(location.pathname);
-    const activeItem = [...appNavItems, ...appFooterItems].find(item => item.id === activeId);
+    const activeItem = [...appNavItems, ...appFooterItems].find(
+      item => item.href === location.pathname
+    );
     return activeItem?.label || "Dashboard";
   };
 
   return (
-    <SimpleLayout
+    <SlimLayout
       navItems={appNavItems}
       footerItems={appFooterItems}
-      activeItemId={getActiveItemId(location.pathname)}
+      activeUrl={location.pathname}
       onNavItemClick={handleItemClick}
       headerContent={
         <div className="flex items-center gap-2">
@@ -109,6 +96,6 @@ export const AppLayout = () => {
       }
     >
       <Outlet />
-    </SimpleLayout>
+    </SlimLayout>
   );
 };

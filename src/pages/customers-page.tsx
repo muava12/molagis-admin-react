@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { Plus, Edit01, Trash01, MessageCircle02, SearchLg } from "@untitledui/icons";
+import { FilterLines, Plus, SearchLg, UploadCloud02, Edit01, Trash01, MessageCircle02 } from "@untitledui/icons";
+import { EmptyState } from "@/components/application/empty-state/empty-state";
+import { TableCard, TableRowActionsDropdown } from "@/components/application/table/table";
+import { ButtonGroup, ButtonGroupItem } from "@/components/base/button-group/button-group";
 import { Button } from "@/components/base/buttons/button";
-import { ModalOverlay, Modal, Dialog } from "@/components/application/modals/modal";
 import { Input } from "@/components/base/input/input";
-import { Label } from "@/components/base/input/label";
+import { ModalOverlay, Modal, Dialog } from "@/components/application/modals/modal";
 import { TextArea } from "@/components/base/textarea/textarea";
-import { Table, TableCard } from "@/components/application/table/table";
 import { CustomerService, type PaginationParams, type PaginatedResponse } from "@/services/customerService";
 import type { Customer, CustomerInsert } from "@/lib/supabase";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -45,11 +46,20 @@ export const CustomersPage = () => {
     const [error, setError] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
+    
+    // Load sorting state from localStorage or use defaults
+    const [sortBy, setSortBy] = useState<string>(() => {
+        return localStorage.getItem('customers-sort-by') || 'date_created';
+    });
+    const [sortOrder, setSortOrder] = useState<"asc" | "desc">(() => {
+        return (localStorage.getItem('customers-sort-order') as "asc" | "desc") || 'desc';
+    });
+    const [filter, setFilter] = useState<"all" | "active" | "inactive">("all");
 
     // Debounce search query to avoid too many API calls
     const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
-    // Fetch customers with pagination and search
+    // Fetch customers with pagination, search, sorting, and filtering
     const fetchCustomers = useCallback(async (params: PaginationParams) => {
         try {
             setLoading(true);
@@ -64,21 +74,24 @@ export const CustomersPage = () => {
         }
     }, []);
 
-    // Effect to fetch data when page or search changes
+    // Effect to fetch data when parameters change
     useEffect(() => {
         fetchCustomers({
             page: currentPage,
             limit: ITEMS_PER_PAGE,
             search: debouncedSearchQuery,
+            sortBy,
+            sortOrder,
+            filter,
         });
-    }, [currentPage, debouncedSearchQuery, fetchCustomers]);
+    }, [currentPage, debouncedSearchQuery, sortBy, sortOrder, filter, fetchCustomers]);
 
-    // Reset to first page when search changes
+    // Reset to first page when search or filter changes
     useEffect(() => {
         if (currentPage !== 1) {
             setCurrentPage(1);
         }
-    }, [debouncedSearchQuery]);
+    }, [debouncedSearchQuery, filter]);
 
     const handleOpenModal = useCallback((customer?: Customer) => {
         if (customer) {
@@ -153,13 +166,16 @@ export const CustomersPage = () => {
                 page: currentPage,
                 limit: ITEMS_PER_PAGE,
                 search: debouncedSearchQuery,
+                sortBy,
+                sortOrder,
+                filter,
             });
             handleCloseModal();
         } catch (error) {
             console.error('Error saving customer:', error);
             setError('Failed to save customer. Please try again.');
         }
-    }, [formData, editingCustomer, fetchCustomers, currentPage, debouncedSearchQuery, handleCloseModal]);
+    }, [formData, editingCustomer, fetchCustomers, currentPage, debouncedSearchQuery, sortBy, sortOrder, filter, handleCloseModal]);
 
     const handleDelete = useCallback(async (customerId: number) => {
         if (confirm('Are you sure you want to delete this customer?')) {
@@ -170,13 +186,16 @@ export const CustomersPage = () => {
                     page: currentPage,
                     limit: ITEMS_PER_PAGE,
                     search: debouncedSearchQuery,
+                    sortBy,
+                    sortOrder,
+                    filter,
                 });
             } catch (error) {
                 console.error('Error deleting customer:', error);
                 setError('Failed to delete customer. Please try again.');
             }
         }
-    }, [fetchCustomers, currentPage, debouncedSearchQuery]);
+    }, [fetchCustomers, currentPage, debouncedSearchQuery, sortBy, sortOrder, filter]);
 
     const formatCurrency = useCallback((amount?: number) => {
         if (!amount) return '-';
@@ -199,298 +218,339 @@ export const CustomersPage = () => {
         setCurrentPage(page);
     }, []);
 
-    // Memoized customer rows for better performance
-    const customerRows = useMemo(() => {
-        return paginatedData.data.map((customer) => (
-            <Table.Row key={customer.id} className="hover:bg-primary_hover">
-                <Table.Cell>
-                    <div className="text-sm font-medium text-fg-primary">
-                        {customer.nama}
-                    </div>
-                </Table.Cell>
-                <Table.Cell>
-                    <div className="flex items-center gap-2">
-                        {customer.telepon && (
-                            <a
-                                href={createWhatsAppLink(customer.telepon)}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center justify-center w-8 h-8 bg-success-500 hover:bg-success-600 rounded-full transition-colors"
-                                title={`WhatsApp: ${customer.telepon}`}
-                            >
-                                <MessageCircle02 className="size-4 text-white" />
-                            </a>
-                        )}
-                        {customer.telepon_alt && (
-                            <a
-                                href={createWhatsAppLink(customer.telepon_alt)}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center justify-center w-8 h-8 bg-success-400 hover:bg-success-500 rounded-full transition-colors"
-                                title={`WhatsApp Alt: ${customer.telepon_alt}`}
-                            >
-                                <MessageCircle02 className="size-4 text-white" />
-                            </a>
-                        )}
-                        {customer.telepon_pemesan && (
-                            <a
-                                href={createWhatsAppLink(customer.telepon_pemesan)}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center justify-center w-8 h-8 bg-primary-500 hover:bg-primary-600 rounded-full transition-colors"
-                                title={`WhatsApp Pemesan: ${customer.telepon_pemesan}`}
-                            >
-                                <MessageCircle02 className="size-4 text-white" />
-                            </a>
-                        )}
-                    </div>
-                </Table.Cell>
-                <Table.Cell>
-                    <div className="text-sm text-fg-secondary">
-                        {customer.alamat && (
-                            <div className="max-w-xs truncate">
-                                {customer.alamat}
-                            </div>
-                        )}
-                        {customer.maps && (
-                            <a
-                                href={customer.maps}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-brand-600 hover:text-brand-800 text-xs"
-                            >
-                                View Map →
-                            </a>
-                        )}
-                    </div>
-                </Table.Cell>
-                <Table.Cell>
-                    <span className="text-fg-primary">
-                        {formatCurrency(customer.ongkir)}
-                    </span>
-                </Table.Cell>
-                <Table.Cell>
-                    <div className="flex items-center gap-2">
-                        <Button
-                            size="sm"
-                            color="secondary"
-                            onClick={() => handleOpenModal(customer)}
-                            iconLeading={Edit01}
-                        />
-                        <Button
-                            size="sm"
-                            color="tertiary-destructive"
-                            onClick={() => handleDelete(customer.id)}
-                            iconLeading={Trash01}
-                        />
-                    </div>
-                </Table.Cell>
-            </Table.Row>
-        ));
-    }, [paginatedData.data, createWhatsAppLink, formatCurrency, handleOpenModal, handleDelete]);
-
-    // Generate pagination buttons
-    const paginationButtons = useMemo(() => {
-        const buttons = [];
-        const { page, totalPages } = paginatedData;
+    // Handle sorting with localStorage persistence
+    const handleSort = useCallback((column: string) => {
+        let newSortOrder: "asc" | "desc";
+        if (sortBy === column) {
+            newSortOrder = sortOrder === "asc" ? "desc" : "asc";
+        } else {
+            newSortOrder = "asc";
+        }
         
-        // Previous button
-        buttons.push(
-            <Button
-                key="prev"
-                size="sm"
-                color="secondary"
-                onClick={() => handlePageChange(page - 1)}
-                isDisabled={page <= 1}
-            >
-                Previous
-            </Button>
-        );
+        setSortBy(column);
+        setSortOrder(newSortOrder);
+        
+        // Save to localStorage
+        localStorage.setItem('customers-sort-by', column);
+        localStorage.setItem('customers-sort-order', newSortOrder);
+    }, [sortBy, sortOrder]);
 
-        // Page numbers
-        const startPage = Math.max(1, page - 2);
-        const endPage = Math.min(totalPages, page + 2);
+    // Handle filter change
+    const handleFilterChange = useCallback((newFilter: "all" | "active" | "inactive") => {
+        setFilter(newFilter);
+    }, []);
 
-        for (let i = startPage; i <= endPage; i++) {
-            buttons.push(
-                <Button
-                    key={i}
-                    size="sm"
-                    color={i === page ? "primary" : "secondary"}
-                    onClick={() => handlePageChange(i)}
-                >
-                    {i}
-                </Button>
+    // Clear search
+    const handleClearSearch = useCallback(() => {
+        setSearchQuery("");
+    }, []);
+
+    // Format date for display
+    const formatDate = useCallback((dateString?: string) => {
+        if (!dateString) return '-';
+        return new Date(dateString).toLocaleDateString('id-ID', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    }, []);
+
+    // Render table content with proper structure
+    const renderTableContent = () => {
+        if (loading && paginatedData.data.length === 0) {
+            return (
+                <div className="flex items-center justify-center overflow-hidden px-8 pt-10 pb-12">
+                    <div className="space-y-4 text-center">
+                        <div className="flex justify-center">
+                            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+                        </div>
+                        <div className="text-lg text-fg-secondary">Loading customers...</div>
+                    </div>
+                </div>
             );
         }
 
-        // Next button
-        buttons.push(
-            <Button
-                key="next"
-                size="sm"
-                color="secondary"
-                onClick={() => handlePageChange(page + 1)}
-                isDisabled={page >= totalPages}
-            >
-                Next
-            </Button>
-        );
-
-        return buttons;
-    }, [paginatedData, handlePageChange]);
-
-    if (loading && paginatedData.data.length === 0) {
-        return (
-            <div className="flex h-screen items-center justify-center">
-                <div className="space-y-4 text-center">
-                    <div className="flex justify-center">
-                        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-                    </div>
-                    <div className="text-lg text-fg-secondary">Loading customers...</div>
-                </div>
-            </div>
-        );
-    }
-
-    // Show skeleton loading for table rows when loading but data exists
-    const renderTableContent = () => {
-        if (loading && paginatedData.data.length > 0) {
+        if (paginatedData.data.length === 0 && !loading) {
             return (
-                <div className="overflow-x-auto">
-                    <Table>
-                        <Table.Header>
-                            <Table.Head label="Name" isRowHeader />
-                            <Table.Head label="WhatsApp" />
-                            <Table.Head label="Address" />
-                            <Table.Head label="Shipping Cost" />
-                            <Table.Head label="Actions" />
-                        </Table.Header>
-                        <Table.Body>
-                            {Array.from({ length: 5 }).map((_, rowIndex) => (
-                                <Table.Row key={rowIndex}>
-                                    {Array.from({ length: 5 }).map((_, cellIndex) => (
-                                        <Table.Cell key={cellIndex}>
-                                            <div className="h-4 w-24 bg-secondary rounded animate-pulse"></div>
-                                        </Table.Cell>
-                                    ))}
-                                </Table.Row>
-                            ))}
-                        </Table.Body>
-                    </Table>
+                <div className="flex items-center justify-center overflow-hidden px-8 pt-10 pb-12">
+                    <EmptyState size="sm">
+                        <EmptyState.Header pattern="circle">
+                            <EmptyState.FeaturedIcon color="gray" theme="modern-neue" />
+                        </EmptyState.Header>
+
+                        <EmptyState.Content>
+                            <EmptyState.Title>No customers found</EmptyState.Title>
+                            <EmptyState.Description>
+                                {searchQuery 
+                                    ? `Your search "${searchQuery}" did not match any customers. Please try again or add a new customer.`
+                                    : "You haven't added any customers yet. Create your first customer to get started."
+                                }
+                            </EmptyState.Description>
+                        </EmptyState.Content>
+
+                        <EmptyState.Footer>
+                            {searchQuery && (
+                                <Button size="md" color="secondary" onClick={handleClearSearch}>
+                                    Clear search
+                                </Button>
+                            )}
+                            <Button size="md" iconLeading={Plus} onClick={() => handleOpenModal()}>
+                                Add customer
+                            </Button>
+                        </EmptyState.Footer>
+                    </EmptyState>
                 </div>
             );
         }
 
         return (
             <div className="overflow-x-auto">
-                <Table>
-                    <Table.Header>
-                        <Table.Head label="Name" isRowHeader />
-                        <Table.Head label="WhatsApp" />
-                        <Table.Head label="Address" />
-                        <Table.Head label="Shipping Cost" />
-                        <Table.Head label="Actions" />
-                    </Table.Header>
-                    <Table.Body>
-                        {customerRows}
-                    </Table.Body>
-                </Table>
-
-                {paginatedData.data.length === 0 && !loading && (
-                    <div className="py-12 text-center">
-                        <div className="text-fg-tertiary">
-                            {searchQuery ? `No customers found for "${searchQuery}"` : "No customers found"}
-                        </div>
-                        {!searchQuery && (
-                            <Button
-                                onClick={() => handleOpenModal()}
-                                className="mt-4"
-                                color="secondary"
+                <table className="w-full">
+                    <thead className="bg-secondary border-b border-secondary">
+                        <tr>
+                            <th 
+                                className="px-6 py-3 text-left text-xs font-semibold text-quaternary cursor-pointer hover:text-tertiary"
+                                onClick={() => handleSort('nama')}
                             >
-                                Add your first customer
-                            </Button>
-                        )}
-                    </div>
-                )}
+                                <div className="flex items-center gap-1">
+                                    Name
+                                    {sortBy === 'nama' && (
+                                        <span className={`text-xs ${sortOrder === 'asc' ? 'rotate-0' : 'rotate-180'}`}>↑</span>
+                                    )}
+                                </div>
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-semibold text-quaternary">
+                                Contact
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-semibold text-quaternary">
+                                Address
+                            </th>
+                            <th
+                                className="px-6 py-3 text-left text-xs font-semibold text-quaternary cursor-pointer hover:text-tertiary"
+                                onClick={() => handleSort('date_created')}
+                            >
+                                <div className="flex items-center gap-1">
+                                    Created Date
+                                    {sortBy === 'date_created' && (
+                                        <span className={`text-xs ${sortOrder === 'asc' ? 'rotate-0' : 'rotate-180'}`}>↑</span>
+                                    )}
+                                </div>
+                            </th>
+                            <th
+                                className="px-6 py-3 text-left text-xs font-semibold text-quaternary cursor-pointer hover:text-tertiary"
+                                onClick={() => handleSort('ongkir')}
+                            >
+                                <div className="flex items-center gap-1">
+                                    Shipping Cost
+                                    {sortBy === 'ongkir' && (
+                                        <span className={`text-xs ${sortOrder === 'asc' ? 'rotate-0' : 'rotate-180'}`}>↑</span>
+                                    )}
+                                </div>
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-semibold text-quaternary">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-secondary">
+                        {paginatedData.data.map((customer) => (
+                            <tr key={customer.id} className="hover:bg-secondary transition-colors">
+                                <td className="px-6 py-4">
+                                    <div className="flex items-center gap-2">
+                                        <div className="text-sm font-medium text-primary">
+                                            {customer.nama}
+                                        </div>
+                                        {(customer as any).hasActiveOrders && (
+                                            <div className="flex items-center justify-center w-2 h-2 bg-success-500 rounded-full" title="Has active orders">
+                                            </div>
+                                        )}
+                                    </div>
+                                </td>
+                                <td className="px-6 py-4">
+                                    <div className="flex items-center gap-2">
+                                        {customer.telepon && (
+                                            <a
+                                                href={createWhatsAppLink(customer.telepon)}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center justify-center w-8 h-8 bg-success-500 hover:bg-success-600 rounded-full transition-colors"
+                                                title={`WhatsApp: ${customer.telepon}`}
+                                            >
+                                                <MessageCircle02 className="size-4 text-white" />
+                                            </a>
+                                        )}
+                                        {customer.telepon_alt && (
+                                            <a
+                                                href={createWhatsAppLink(customer.telepon_alt)}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center justify-center w-8 h-8 bg-success-400 hover:bg-success-500 rounded-full transition-colors"
+                                                title={`WhatsApp Alt: ${customer.telepon_alt}`}
+                                            >
+                                                <MessageCircle02 className="size-4 text-white" />
+                                            </a>
+                                        )}
+                                        {customer.telepon_pemesan && (
+                                            <a
+                                                href={createWhatsAppLink(customer.telepon_pemesan)}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center justify-center w-8 h-8 bg-primary-500 hover:bg-primary-600 rounded-full transition-colors"
+                                                title={`WhatsApp Pemesan: ${customer.telepon_pemesan}`}
+                                            >
+                                                <MessageCircle02 className="size-4 text-white" />
+                                            </a>
+                                        )}
+                                    </div>
+                                </td>
+                                <td className="px-6 py-4">
+                                    <div className="text-sm text-tertiary">
+                                        {customer.alamat && (
+                                            <div className="max-w-xs truncate">
+                                                {customer.alamat}
+                                            </div>
+                                        )}
+                                        {customer.maps && (
+                                            <a
+                                                href={customer.maps}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-brand-600 hover:text-brand-800 text-xs"
+                                            >
+                                                View Map →
+                                            </a>
+                                        )}
+                                    </div>
+                                </td>
+                                <td className="px-6 py-4">
+                                    <span className="text-sm text-tertiary">
+                                        {formatDate(customer.date_created)}
+                                    </span>
+                                </td>
+                                <td className="px-6 py-4">
+                                    <span className="text-primary">
+                                        {formatCurrency(customer.ongkir)}
+                                    </span>
+                                </td>
+                                <td className="px-6 py-4">
+                                    <div className="flex items-center gap-2">
+                                        <Button
+                                            size="sm"
+                                            color="secondary"
+                                            onClick={() => handleOpenModal(customer)}
+                                            iconLeading={Edit01}
+                                        />
+                                        <Button
+                                            size="sm"
+                                            color="tertiary-destructive"
+                                            onClick={() => handleDelete(customer.id)}
+                                            iconLeading={Trash01}
+                                        />
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         );
     };
 
     return (
-        <div className="space-y-8">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold text-fg-primary">Customers</h1>
-                    <p className="mt-2 text-fg-secondary">
-                        Manage your customer database - {paginatedData.total} customers total
-                    </p>
+        <TableCard.Root>
+            <TableCard.Header
+                title="Customer Management"
+                badge={`${paginatedData.total} customers`}
+                description="Keep track of customers and their information."
+                contentTrailing={
+                    <>
+                        <div className="flex gap-3 md:pr-9">
+                            <Button color="secondary" size="md" iconLeading={UploadCloud02}>
+                                Import
+                            </Button>
+                            <Button size="md" iconLeading={Plus} onClick={() => handleOpenModal()}>
+                                Add customer
+                            </Button>
+                        </div>
+                        <div className="absolute top-5 right-4 md:right-6">
+                            <TableRowActionsDropdown />
+                        </div>
+                    </>
+                }
+            />
+
+            <div className="flex justify-between gap-4 border-b border-secondary px-4 py-3 md:px-6">
+                <ButtonGroup defaultSelectedKeys={[filter]} onSelectionChange={(keys) => {
+                    const selectedKey = Array.from(keys)[0] as "all" | "active" | "inactive";
+                    handleFilterChange(selectedKey);
+                }}>
+                    <ButtonGroupItem id="all">View all</ButtonGroupItem>
+                    <ButtonGroupItem id="active">Active</ButtonGroupItem>
+                    <ButtonGroupItem id="inactive">Inactive</ButtonGroupItem>
+                </ButtonGroup>
+
+                <div className="hidden gap-3 md:flex">
+                    <Input 
+                        icon={SearchLg} 
+                        aria-label="Search" 
+                        placeholder="Search customers..." 
+                        className="w-70"
+                        value={searchQuery}
+                        onChange={setSearchQuery}
+                    />
+                    <Button size="md" color="secondary" iconLeading={FilterLines}>
+                        Filters
+                    </Button>
                 </div>
-                <Button
-                    onClick={() => handleOpenModal()}
-                    color="primary"
-                    size="lg"
-                    iconLeading={Plus}
-                >
-                    Add Customer
-                </Button>
             </div>
 
-            {/* Search and Error */}
-            <div className="space-y-4">
-                <Input
-                    placeholder="Search customers by name..."
-                    value={searchQuery}
-                    onChange={(value) => setSearchQuery(value)}
-                    icon={SearchLg}
-                    className="max-w-md"
-                />
+            {error && (
+                <div className="mx-4 my-3 md:mx-6 rounded-lg bg-error-50 border border-error-200 p-4 text-error-700">
+                    {error}
+                    <button
+                        onClick={() => setError(null)}
+                        className="ml-2 text-error-500 hover:text-error-700"
+                    >
+                        ×
+                    </button>
+                </div>
+            )}
 
-                {error && (
-                    <div className="rounded-lg bg-error-50 border border-error-200 p-4 text-error-700">
-                        {error}
-                        <button
-                            onClick={() => setError(null)}
-                            className="ml-2 text-error-500 hover:text-error-700"
+            {renderTableContent()}
+
+            {paginatedData.totalPages > 1 && (
+                <div className="flex items-center justify-between border-t border-secondary px-6 pt-3 pb-4">
+                    <span className="text-sm text-tertiary">
+                        Page {paginatedData.page} of {paginatedData.totalPages}
+                    </span>
+                    <div className="flex gap-3">
+                        <Button 
+                            color="secondary" 
+                            size="sm"
+                            onClick={() => handlePageChange(paginatedData.page - 1)}
+                            isDisabled={paginatedData.page <= 1}
                         >
-                            ×
-                        </button>
+                            Previous
+                        </Button>
+                        <Button 
+                            color="secondary" 
+                            size="sm"
+                            onClick={() => handlePageChange(paginatedData.page + 1)}
+                            isDisabled={paginatedData.page >= paginatedData.totalPages}
+                        >
+                            Next
+                        </Button>
                     </div>
-                )}
-            </div>
-
-            {/* Table Section */}
-            <div className="rounded-xl border border-secondary bg-primary overflow-hidden">
-                <div className="px-6 py-4 border-b border-secondary">
-                    <h3 className="text-lg font-semibold text-fg-primary">
-                        Customer Directory
-                    </h3>
                 </div>
-                {renderTableContent()}
-                
-                {/* Pagination */}
-                {paginatedData.totalPages > 1 && (
-                    <div className="px-6 py-4 border-t border-secondary flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <div className="text-sm text-fg-tertiary">
-                            Showing {((paginatedData.page - 1) * paginatedData.limit) + 1} to{' '}
-                            {Math.min(paginatedData.page * paginatedData.limit, paginatedData.total)} of{' '}
-                            {paginatedData.total} customers
-                        </div>
-                        <div className="flex items-center gap-2">
-                            {paginationButtons}
-                        </div>
-                    </div>
-                )}
-            </div>
+            )}
 
-            {/* Customer Form Modal - Only render when open */}
+            {/* Customer Form Modal */}
             {isModalOpen && (
                 <ModalOverlay isOpen={isModalOpen}>
                     <Modal>
                         <Dialog>
                             <div className="bg-primary rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-                                <h2 className="text-lg font-semibold mb-4 text-fg-primary">
+                                <h2 className="text-lg font-semibold mb-4 text-primary">
                                     {editingCustomer ? "Edit Customer" : "Add New Customer"}
                                 </h2>
                                 
@@ -570,6 +630,6 @@ export const CustomersPage = () => {
                     </Modal>
                 </ModalOverlay>
             )}
-        </div>
+        </TableCard.Root>
     );
 };

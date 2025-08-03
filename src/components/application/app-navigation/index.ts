@@ -1,4 +1,8 @@
-// Simple Navigation Components
+// Slim Navigation Components
+export { SlimLayout } from "./sidebar-slim-layout";
+export { SlimHeader } from "./slim-header";
+
+// Simple Navigation Components (legacy)
 export { SimpleHeader } from "./simple-header";
 export { SimpleSidebar, defaultNavItems, defaultFooterItems } from "./simple-sidebar";
 export { SimpleLayout, useSimpleLayout, ExampleLayout } from "./simple-layout";
