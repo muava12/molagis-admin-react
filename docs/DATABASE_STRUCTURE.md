@@ -553,4 +553,46 @@ The database implements business logic through a variety of RPC (Remote Procedur
 
 10. **Data Integrity**: The system includes several functions for identifying and correcting data inconsistencies, such as mismatched totals and subtotals.
 
+## CRM Enhancements (August 2025)
+
+### New Views
+1. **customer_last_order** - A view that efficiently retrieves the last order date for each customer without modifying the main customers table. This provides real-time last order date information while maintaining data integrity.
+
+### New RPC Functions
+1. **get_customers_with_last_order(search_term TEXT DEFAULT '')** - Retrieves customer list with last order date information, supporting search functionality across customer name, address, and phone number.
+
+2. **get_customer_crm_stats()** - Provides CRM statistics overview including total customers, active customers (last order within 90 days), inactive customers, and new customers (created within last 30 days).
+
+3. **get_customers_by_activity(activity_status TEXT DEFAULT 'all', search_term TEXT DEFAULT '')** - Retrieves customers filtered by activity status (active/inactive/all) with search capabilities.
+
+### CRM Business Logic
+- **Active Customer Definition**: Last order date within 90 days OR no orders (new customers)
+- **Inactive Customer Definition**: Last order date older than 90 days
+- **New Customer Definition**: Customer created within last 30 days
+- **Days Since Last Order**: Calculated metric for customer engagement tracking
+
+## Business Logic
+
+1. **Order Creation**: Orders are created with a reference to a customer and a pesan date. Each order can have multiple delivery dates. The `submit_order` RPC function handles the complete order submission process, including validation and creation of related records across multiple tables.
+
+2. **Delivery Management**: Each order can have multiple delivery dates, with each delivery date having its own courier assignment, shipping cost, and status. Delivery statuses include 'pending', 'in-progress', 'completed', and 'canceled'. The system provides several RPC functions for managing deliveries, including updating statuses and retrieving delivery details.
+
+3. **Order Details**: For each delivery date, there can be multiple order details referencing different packages with quantities and pricing information. The system tracks both selling price (harga_jual) and cost price (harga_modal) for packages, and calculates profits at various levels.
+
+4. **Pricing**: The system implements complex pricing logic with support for additional items, shipping costs, and various pricing tiers. Several RPC functions are available for testing and updating pricing calculations.
+
+5. **Customer Management**: Customers have detailed contact information and default shipping costs. They can also be assigned labels and tags for categorization. New customers are automatically saved when they contact via WhatsApp.
+
+6. **Payment**: Three payment methods are supported: COD, Transfer, and Belum Bayar. Payment information is tracked at the order level.
+
+7. **Financial Tracking**: The system tracks financial records with categories for expenses and income, and generates weekly reports. Various RPC functions provide financial reporting capabilities, including revenue calculations and financial overviews.
+
+8. **Messaging Integration**: The system integrates with WhatsApp and other messaging platforms through buffer tables and media storage. WhatsApp stickers and media are stored with unique identifiers.
+
+9. **User Management**: User profiles are maintained with role-based access control.
+
+10. **Data Integrity**: The system includes several functions for identifying and correcting data inconsistencies, such as mismatched totals and subtotals.
+
+11. **CRM Analytics**: The system now includes CRM analytics capabilities through specialized views and RPC functions for customer engagement tracking and segmentation.
+
 This documentation provides the necessary context for future coding tasks related to the database layer of the Molagis Catering Order System, based on the actual database structure and implemented business logic.
