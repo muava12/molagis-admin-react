@@ -17,7 +17,9 @@
         "directory_tree",
         "search_files",
         "get_file_info",
-        "list_allowed_directories"
+        "list_allowed_directories",
+        "read_file",
+        "create_directory"
       ]
     },
     "supabase": {
@@ -35,7 +37,14 @@
         "list_tables",
         "list_edge_functions",
         "execute_sql",
-        "list_extensions"
+        "list_extensions",
+        "list_branches",
+        "list_migrations",
+        "get_logs",
+        "get_advisors",
+        "search_docs",
+        "get_anon_key",
+        "get_project_url"
       ]
     },
     "time": {
