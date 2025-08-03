@@ -36,7 +36,6 @@
       "alwaysAllow": [
         "list_tables",
         "list_edge_functions",
-        "execute_sql",
         "list_extensions",
         "list_branches",
         "list_migrations",

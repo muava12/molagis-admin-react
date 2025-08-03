@@ -6,23 +6,7 @@ import { OrdersPage } from './pages/orders-page';
 import { FinancePage } from './pages/finance-page';
 import { ReportsPage } from './pages/reports-page';
 import DemoLoadingPage from './pages/demo-loading';
-
-// Settings page placeholder
-const SettingsPage = () => (
-  <div className="space-y-8">
-    <div className="flex items-center justify-between">
-      <div>
-        <h1 className="text-3xl font-bold text-fg-primary">Settings</h1>
-        <p className="mt-2 text-fg-secondary">
-          Manage your application settings and preferences
-        </p>
-      </div>
-    </div>
-    <div className="rounded-xl border border-secondary bg-primary p-6">
-      <p className="text-fg-secondary">Settings page content coming soon...</p>
-    </div>
-  </div>
-);
+import { SettingsPage } from './pages/settings-page';
 
 function App() {
   return (
