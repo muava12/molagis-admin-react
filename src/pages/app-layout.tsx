@@ -8,7 +8,7 @@ const appNavItems: NavItem[] = [
   {
     id: "dashboard",
     label: "Dashboard",
-    href: "",
+    href: "/dashboard",
     icon: BarChartSquare02,
   },
   {

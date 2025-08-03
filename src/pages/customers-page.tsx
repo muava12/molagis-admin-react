@@ -257,7 +257,7 @@ export const CustomersPage = () => {
                                 href={customer.maps}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-primary-600 hover:text-primary-800 text-xs"
+                                className="text-brand-600 hover:text-brand-800 text-xs"
                             >
                                 View Map →
                             </a>
