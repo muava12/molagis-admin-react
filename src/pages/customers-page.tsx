@@ -354,56 +354,68 @@ export const CustomersPage = () => {
     }
 
     // Show skeleton loading for table rows when loading but data exists
-    if (loading && paginatedData.data.length > 0) {
-        return (
-            <div className="space-y-8">
-                {/* Header */}
-                <div className="flex items-center justify-between">
-                    <div>
-                        <div className="h-8 w-48 bg-secondary rounded animate-pulse"></div>
-                        <div className="mt-2 h-4 w-64 bg-secondary rounded animate-pulse"></div>
-                    </div>
-                    <div className="h-10 w-32 bg-secondary rounded animate-pulse"></div>
-                </div>
-
-                {/* Search and Error */}
-                <div className="space-y-4">
-                    <div className="h-10 w-80 bg-secondary rounded animate-pulse"></div>
-                </div>
-
-                {/* Table Section with Skeleton */}
-                <div className="rounded-xl border border-secondary bg-primary overflow-hidden">
-                    <div className="px-6 py-4 border-b border-secondary">
-                        <div className="h-6 w-40 bg-secondary rounded animate-pulse"></div>
-                    </div>
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead className="bg-secondary">
-                                <tr>
-                                    {Array.from({ length: 5 }).map((_, i) => (
-                                        <th key={i} className="px-6 py-3 text-left">
-                                            <div className="h-4 w-20 bg-primary rounded animate-pulse"></div>
-                                        </th>
+    const renderTableContent = () => {
+        if (loading && paginatedData.data.length > 0) {
+            return (
+                <div className="overflow-x-auto">
+                    <Table>
+                        <Table.Header>
+                            <Table.Head label="Name" isRowHeader />
+                            <Table.Head label="WhatsApp" />
+                            <Table.Head label="Address" />
+                            <Table.Head label="Shipping Cost" />
+                            <Table.Head label="Actions" />
+                        </Table.Header>
+                        <Table.Body>
+                            {Array.from({ length: 5 }).map((_, rowIndex) => (
+                                <Table.Row key={rowIndex}>
+                                    {Array.from({ length: 5 }).map((_, cellIndex) => (
+                                        <Table.Cell key={cellIndex}>
+                                            <div className="h-4 w-24 bg-secondary rounded animate-pulse"></div>
+                                        </Table.Cell>
                                     ))}
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-secondary">
-                                {Array.from({ length: 5 }).map((_, rowIndex) => (
-                                    <tr key={rowIndex} className="hover:bg-primary_hover">
-                                        {Array.from({ length: 5 }).map((_, cellIndex) => (
-                                            <td key={cellIndex} className="px-6 py-4">
-                                                <div className="h-4 w-24 bg-secondary rounded animate-pulse"></div>
-                                            </td>
-                                        ))}
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                                </Table.Row>
+                            ))}
+                        </Table.Body>
+                    </Table>
                 </div>
+            );
+        }
+
+        return (
+            <div className="overflow-x-auto">
+                <Table>
+                    <Table.Header>
+                        <Table.Head label="Name" isRowHeader />
+                        <Table.Head label="WhatsApp" />
+                        <Table.Head label="Address" />
+                        <Table.Head label="Shipping Cost" />
+                        <Table.Head label="Actions" />
+                    </Table.Header>
+                    <Table.Body>
+                        {customerRows}
+                    </Table.Body>
+                </Table>
+
+                {paginatedData.data.length === 0 && !loading && (
+                    <div className="py-12 text-center">
+                        <div className="text-fg-tertiary">
+                            {searchQuery ? `No customers found for "${searchQuery}"` : "No customers found"}
+                        </div>
+                        {!searchQuery && (
+                            <Button
+                                onClick={() => handleOpenModal()}
+                                className="mt-4"
+                                color="secondary"
+                            >
+                                Add your first customer
+                            </Button>
+                        )}
+                    </div>
+                )}
             </div>
         );
-    }
+    };
 
     return (
         <div className="space-y-8">
@@ -455,38 +467,8 @@ export const CustomersPage = () => {
                         Customer Directory
                     </h3>
                 </div>
-                <div className="overflow-x-auto">
-                    <Table>
-                        <Table.Header>
-                            <Table.Head label="Name" />
-                            <Table.Head label="WhatsApp" />
-                            <Table.Head label="Address" />
-                            <Table.Head label="Shipping Cost" />
-                            <Table.Head label="Actions" />
-                        </Table.Header>
-                        <Table.Body>
-                            {customerRows}
-                        </Table.Body>
-                    </Table>
-
-                    {paginatedData.data.length === 0 && !loading && (
-                        <div className="py-12 text-center">
-                            <div className="text-fg-tertiary">
-                                {searchQuery ? `No customers found for "${searchQuery}"` : "No customers found"}
-                            </div>
-                            {!searchQuery && (
-                                <Button
-                                    onClick={() => handleOpenModal()}
-                                    className="mt-4"
-                                    color="secondary"
-                                >
-                                    Add your first customer
-                                </Button>
-                            )}
-                        </div>
-                    )}
-                </div>
-
+                {renderTableContent()}
+                
                 {/* Pagination */}
                 {paginatedData.totalPages > 1 && (
                     <div className="px-6 py-4 border-t border-secondary flex flex-col sm:flex-row items-center justify-between gap-4">

@@ -78,7 +78,7 @@ export const SimpleSidebar = ({
             "group flex w-full items-center rounded-lg text-sm font-medium transition-colors text-left",
             // Perfect alignment for collapsed state - icon only
             collapsed && level === 0
-              ? "mx-2 px-2 py-2 justify-center"
+              ? "mx-1 px-2 py-2 justify-center"
               : level === 0
                 ? "mx-2 px-3 py-2"
                 : "mx-2 ml-6 px-3 py-2",
@@ -182,11 +182,7 @@ export const SimpleSidebar = ({
     >
       {/* Header - always show logo in sidebar */}
       <div className="flex h-16 items-center px-4">
-        {collapsed ? (
-          <UntitledLogo className="h-8 w-8" />
-        ) : (
-          <UntitledLogo className="h-8" />
-        )}
+        <UntitledLogo className={cx("h-8", collapsed ? "w-8" : "")} />
       </div>
 
       {/* Navigation */}
