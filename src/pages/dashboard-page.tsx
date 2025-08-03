@@ -1,8 +1,55 @@
 import { BarChart03, Users01, Rows01, PieChart03 } from "@untitledui/icons";
 import { Button } from "@/components/base/buttons/button";
 import { BadgeWithDot } from "@/components/base/badges/badges";
+import { useDashboardMetrics } from "@/hooks/use-dashboard-metrics";
+import { Skeleton } from "@/components/base/loading";
 
 export const DashboardPage = () => {
+  const { data, loading, error } = useDashboardMetrics();
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+    }).format(value);
+  };
+
+  const stats = [
+    {
+      label: "Dana Belum Diproses",
+      value: data?.outstandingRevenue ? formatCurrency(data.outstandingRevenue) : "0",
+      change: "+12%",
+      icon: PieChart03,
+      color: "text-purple-600",
+    },
+    {
+      label: "Active Customers",
+      value: data?.activeCustomerCount || "0",
+      change: "+8%",
+      icon: Users01,
+      color: "text-blue-600",
+    },
+    {
+      label: "Total Orders",
+      value: "89",
+      change: "+8%",
+      icon: Rows01,
+      color: "text-green-600",
+    },
+    {
+      label: "Growth",
+      value: "23.5%",
+      change: "+5%",
+      icon: BarChart03,
+      color: "text-orange-600",
+    },
+  ];
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -20,52 +67,34 @@ export const DashboardPage = () => {
 
       {/* Stats Section */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {[
-          { 
-            label: "Total Customers", 
-            value: "1,234", 
-            change: "+12%", 
-            icon: Users01,
-            color: "text-blue-600" 
-          },
-          { 
-            label: "Active Orders", 
-            value: "89", 
-            change: "+8%", 
-            icon: Rows01,
-            color: "text-green-600" 
-          },
-          { 
-            label: "Revenue", 
-            value: "Rp 45.2M", 
-            change: "+15%", 
-            icon: PieChart03,
-            color: "text-purple-600" 
-          },
-          { 
-            label: "Growth", 
-            value: "23.5%", 
-            change: "+5%", 
-            icon: BarChart03,
-            color: "text-orange-600" 
-          },
-        ].map((stat, i) => (
-          <div
-            key={i}
-            className="rounded-lg border border-secondary bg-primary p-6 shadow-sm hover:shadow-md transition-shadow"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <stat.icon className={`h-8 w-8 ${stat.color}`} />
-              <span className="text-xs text-success-600 font-medium">
-                {stat.change}
-              </span>
-            </div>
-            <p className="text-sm text-fg-tertiary">{stat.label}</p>
-            <p className="text-2xl font-bold text-fg-primary mt-1">
-              {stat.value}
-            </p>
-          </div>
-        ))}
+        {loading
+          ? Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                className="rounded-lg border border-secondary bg-primary p-6 shadow-sm"
+              >
+                <Skeleton className="h-8 w-8 mb-4" />
+                <Skeleton className="h-4 w-1/2 mb-1" />
+                <Skeleton className="h-6 w-1/3" />
+              </div>
+            ))
+          : stats.map((stat, i) => (
+              <div
+                key={i}
+                className="rounded-lg border border-secondary bg-primary p-6 shadow-sm hover:shadow-md transition-shadow"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <stat.icon className={`h-8 w-8 ${stat.color}`} />
+                  <span className="text-xs text-success-600 font-medium">
+                    {stat.change}
+                  </span>
+                </div>
+                <p className="text-sm text-fg-tertiary">{stat.label}</p>
+                <p className="text-2xl font-bold text-fg-primary mt-1">
+                  {stat.value}
+                </p>
+              </div>
+            ))}
       </div>
 
       {/* Content Grid */}
