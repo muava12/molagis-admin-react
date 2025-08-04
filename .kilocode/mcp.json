@@ -74,6 +74,9 @@
         "-y",
         "@modelcontextprotocol/server-postgres",
         "postgresql://postgres:MantabJiwa99@db.oabyaiyxfcbjpfmxdcrq.supabase.co:5432/postgres"
+      ],
+      "alwaysAllow": [
+        "query"
       ]
     }
   }
