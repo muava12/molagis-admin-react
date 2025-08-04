@@ -137,19 +137,15 @@ SELECT send_courier_alert(1, 'Alamat si A berubah ke Jl. Baru No. 123');
 
 ### Struktur Folder
 ```
-delivery-app/
-├── src/
-│   ├── components/
-│   │   ├── DeliveryPage.tsx      # Halaman utama
-│   │   ├── DeliveryListItem.tsx  # Item pengiriman
-│   │   ├── DailyReportModal.tsx  # Modal laporan harian
-│   │   └── AlertBanner.tsx       # Banner notifikasi
-│   ├── lib/
-│   │   └── supabase.ts          # Konfigurasi & API client
-│   └── App.tsx
-├── vite.config.ts               # Konfigurasi PWA
-├── tailwind.config.js
-└── package.json
+src/
+├── components/
+│   ├── DeliveryPage.tsx      # Halaman utama
+│   ├── DeliveryListItem.tsx  # Item pengiriman
+│   ├── DailyReportModal.tsx  # Modal laporan harian
+│   └── AlertBanner.tsx       # Banner notifikasi
+├── lib/
+│   └── supabase.ts          # Konfigurasi & API client
+└── App.tsx
 ```
 
 ### Fitur Utama
@@ -215,7 +211,6 @@ Semua migrasi dan RPC sudah diterapkan ke Supabase production.
 
 ### 2. **Setup Frontend**
 ```bash
-cd delivery-app
 npm install
 npm run build
 npm run preview  # atau deploy ke hosting

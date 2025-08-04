@@ -1,8 +1,6 @@
 import { Bell01, Menu01, X } from "@untitledui/icons";
 import { Avatar } from "@/components/base/avatar/avatar";
-import { UntitledLogo } from "@/components/foundations/logo/untitledui-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { cx } from "@/utils/cx";
 
 interface SimpleHeaderProps {
   /** Whether the sidebar is collapsed */

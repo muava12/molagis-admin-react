@@ -1,4 +1,3 @@
-import { useNavigate, useLocation } from "react-router-dom";
 import { SlimHeader } from "./slim-header";
 import type { NavItemType } from "./config";
 import { SidebarNavigationSlim } from "./sidebar-navigation/sidebar-slim";
@@ -11,8 +10,6 @@ interface SlimLayoutProps {
   footerItems?: (NavItemType & { icon: React.FC<{ className?: string }> })[];
   /** Current active URL */
   activeUrl?: string;
-  /** Callback when nav item is clicked */
-  onNavItemClick?: (item: NavItemType) => void;
   /** Header content */
   headerContent?: React.ReactNode;
   /** Main content */
@@ -25,25 +22,13 @@ export const SlimLayout = ({
   navItems,
   footerItems = [],
   activeUrl,
-  onNavItemClick,
   headerContent,
   children,
   contentClassName,
 }: SlimLayoutProps) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  
   // Get the current URL
-  const currentUrl = activeUrl || location.pathname;
+  const currentUrl = activeUrl || "";
 
-  const handleNavItemClick = (item: NavItemType) => {
-    onNavItemClick?.(item);
-    
-    // Navigate using React Router (no page refresh)
-    if (item.href) {
-      navigate(item.href);
-    }
-  };
 
   return (
     <>

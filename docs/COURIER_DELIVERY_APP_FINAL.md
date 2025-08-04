@@ -84,20 +84,16 @@ CREATE TABLE courier_daily_reports (
 
 ### File Structure
 ```
-delivery-app/
-├── src/
-│   ├── components/
-│   │   ├── DeliveryPage.tsx      # Main page component
-│   │   ├── DeliveryListItem.tsx  # Individual delivery item
-│   │   ├── DailyReportModal.tsx  # Report submission modal
-│   │   └── AlertBanner.tsx       # Alert notifications
-│   ├── lib/
-│   │   └── supabase.ts          # Supabase client & API functions
-│   ├── App.tsx                  # Router setup
-│   └── main.tsx                 # App entry point
-├── package.json
-├── vite.config.ts
-└── tailwind.config.js
+src/
+├── components/
+│   ├── DeliveryPage.tsx      # Main page component
+│   ├── DeliveryListItem.tsx  # Individual delivery item
+│   ├── DailyReportModal.tsx  # Report submission modal
+│   └── AlertBanner.tsx       # Alert notifications
+├── lib/
+│   └── supabase.ts          # Supabase client & API functions
+├── App.tsx                  # Router setup
+└── main.tsx                 # App entry point
 ```
 
 ### Key Components
@@ -163,7 +159,6 @@ END IF;
 
 ### Development
 ```bash
-cd delivery-app
 npm install
 npm run dev
 ```

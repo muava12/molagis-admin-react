@@ -1,26 +1,32 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AppLayout } from './pages/app-layout';
 import { DashboardPage } from './pages/dashboard-page';
 import { CustomersPage } from './pages/customers-page';
 import { OrdersPage } from './pages/orders-page';
 import { FinancePage } from './pages/finance-page';
 import { ReportsPage } from './pages/reports-page';
-import DemoLoadingPage from './pages/demo-loading';
 import { SettingsPage } from './pages/settings-page';
+import { LandingPage } from './pages/landing-page';
+import { DevelopmentPage } from './pages/development-page';
+import { LoginPage } from './pages/login-page';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="/" element={<AppLayout />}>
+        {/* Public routes */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/development" element={<DevelopmentPage />} />
+        
+        {/* Protected app routes */}
+        <Route path="/app" element={<AppLayout />}>
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="customers" element={<CustomersPage />} />
           <Route path="orders" element={<OrdersPage />} />
           <Route path="finance" element={<FinancePage />} />
           <Route path="reports" element={<ReportsPage />} />
           <Route path="settings" element={<SettingsPage />} />
-          <Route path="loading-demo" element={<DemoLoadingPage />} />
         </Route>
       </Routes>
     </Router>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FilterLines, Plus, SearchLg, UploadCloud02, Edit01, Trash01, MessageCircle02 } from "@untitledui/icons";
 import { EmptyState } from "@/components/application/empty-state/empty-state";
 import { TableCard, TableRowActionsDropdown } from "@/components/application/table/table";
