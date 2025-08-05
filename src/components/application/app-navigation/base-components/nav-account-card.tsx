@@ -1,7 +1,7 @@
 import type { FC, HTMLAttributes } from "react";
 import { useCallback, useEffect, useRef } from "react";
 import type { Placement } from "@react-types/overlays";
-import { BookOpen01, ChevronSelectorVertical, LogOut01, Plus, Settings01, User01 } from "@untitledui/icons";
+import { BookOpen01, ChevronSelectorVertical, LogOut01, Plus, Settings01, User01, LifeBuoy01 } from "@untitledui/icons";
 import { useFocusManager } from "react-aria";
 import type { DialogProps as AriaDialogProps } from "react-aria-components";
 import { Button as AriaButton, Dialog as AriaDialog, DialogTrigger as AriaDialogTrigger, Popover as AriaPopover } from "react-aria-components";
@@ -10,6 +10,7 @@ import { Button } from "@/components/base/buttons/button";
 import { RadioButtonBase } from "@/components/base/radio-buttons/radio-buttons";
 import { useBreakpoint } from "@/hooks/use-breakpoint";
 import { cx } from "@/utils/cx";
+import { ThemeToggleGroup } from "@/components/theme-toggle-group";
 
 type NavAccountType = {
     /** Unique identifier for the nav item. */
@@ -87,6 +88,7 @@ export const NavAccountMenu = ({
                     <NavAccountCardMenuItem label="View profile" icon={User01} shortcut="⌘K->P" />
                     <NavAccountCardMenuItem label="Account settings" icon={Settings01} shortcut="⌘S" />
                     <NavAccountCardMenuItem label="Documentation" icon={BookOpen01} />
+                    <NavAccountCardMenuItem label="Help" icon={LifeBuoy01} />
                 </div>
                 <div className="flex flex-col gap-0.5 border-t border-secondary py-1.5">
                     <div className="px-3 pt-1.5 pb-1 text-xs font-semibold text-tertiary">Switch account</div>
@@ -112,6 +114,10 @@ export const NavAccountMenu = ({
                         Add account
                     </Button>
                 </div>
+            </div>
+
+            <div className="border-t border-secondary px-3 py-3">
+                <ThemeToggleGroup />
             </div>
 
             <div className="pt-1 pb-1.5">

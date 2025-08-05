@@ -14,29 +14,33 @@ import DemoNavigationPage from "@/pages/demo-navigation";
 import { AppLayout } from "@/pages/app-layout";
 import { RouteProvider } from "@/providers/router-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
+import { UserProvider } from "@/hooks/use-user";
+import { RoleBasedGuard } from "@/components/guards/role-based-guard";
 import "@/styles/globals.css";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
         <ThemeProvider>
-            <BrowserRouter>
-                <RouteProvider>
+            <UserProvider>
+                <BrowserRouter>
+                    <RouteProvider>
                     <Routes>
                         <Route path="/" element={<LandingPage />} />
                         <Route path="/demo" element={<DemoNavigationPage />} />
                         <Route path="/login" element={<LoginPage />} />
                         <Route element={<AppLayout />}>
-                            <Route path="/dashboard" element={<DashboardPage />} />
-                            <Route path="/customers" element={<CustomersPage />} />
-                            <Route path="/orders" element={<OrdersPage />} />
-                            <Route path="/finance" element={<FinancePage />} />
-                            <Route path="/reports" element={<ReportsPage />} />
-                            <Route path="/settings" element={<SettingsPage />} />
+                            <Route path="/dashboard" element={<RoleBasedGuard roles={['owner', 'manager', 'cs']}><DashboardPage /></RoleBasedGuard>} />
+                            <Route path="/customers" element={<RoleBasedGuard roles={['owner', 'manager', 'cs']}><CustomersPage /></RoleBasedGuard>} />
+                            <Route path="/orders" element={<RoleBasedGuard roles={['owner', 'manager', 'cs']}><OrdersPage /></RoleBasedGuard>} />
+                            <Route path="/finance" element={<RoleBasedGuard roles={['owner', 'manager']}><FinancePage /></RoleBasedGuard>} />
+                            <Route path="/reports" element={<RoleBasedGuard roles={['owner', 'manager']}><ReportsPage /></RoleBasedGuard>} />
+                            <Route path="/settings" element={<RoleBasedGuard roles={['owner', 'manager']}><SettingsPage /></RoleBasedGuard>} />
                         </Route>
                         <Route path="*" element={<NotFound />} />
                     </Routes>
-                </RouteProvider>
-            </BrowserRouter>
+                    </RouteProvider>
+                </BrowserRouter>
+            </UserProvider>
         </ThemeProvider>
     </StrictMode>,
 );
