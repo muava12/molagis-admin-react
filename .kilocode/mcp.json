@@ -103,6 +103,17 @@
       "alwaysAllow": [
         "query"
       ]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest",
+        "--browser=firefox",
+        "--headless=true"
+      ],
+      "disabled": false,
+      "alwaysAllow": []
     }
   }
 }
