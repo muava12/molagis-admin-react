@@ -22,7 +22,32 @@
         "create_directory"
       ]
     },
-    "supabase": {
+    "supabase-admin-catering": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--project-ref=oabyaiyxfcbjpfmxdcrq"
+      ],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "sbp_3fd6da9a71945d9d507cdfdaa2ade80ab47f84a7"
+      },
+      "disabled": false,
+      "alwaysAllow": [
+        "list_tables",
+        "list_edge_functions",
+        "list_extensions",
+        "list_branches",
+        "list_migrations",
+        "get_logs",
+        "get_advisors",
+        "search_docs",
+        "get_anon_key",
+        "get_project_url",
+        "execute_sql"
+      ]
+    },
+    "supabase-crm-catering": {
       "command": "npx",
       "args": [
         "-y",
@@ -53,7 +78,7 @@
         "mcp-server-time"
       ]
     },
-    "postgrest": {
+    "postgrest-admin-catering": {
       "command": "npx",
       "args": [
         "-y",
@@ -68,7 +93,7 @@
       "alwaysAllow": [],
       "disabled": false
     },
-    "postgres": {
+    "postgres-admin-catering": {
       "command": "npx",
       "args": [
         "-y",
