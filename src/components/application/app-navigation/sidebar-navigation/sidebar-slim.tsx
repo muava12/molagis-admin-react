@@ -16,7 +16,6 @@ import { NavItemBase } from "../base-components/nav-item";
 import { NavItemButton } from "../base-components/nav-item-button";
 import { NavList } from "../base-components/nav-list";
 import type { NavItemType } from "../config";
-import { useTheme } from "@/providers/theme-provider";
 
 interface SidebarNavigationSlimProps {
     /** URL of the currently active item. */
@@ -35,12 +34,6 @@ export const SidebarNavigationSlim = ({ activeUrl, items, footerItems = [], hide
     const activeItem = [...items, ...footerItems].find((item) => item.href === activeUrl || item.items?.some((subItem) => subItem.href === activeUrl));
     const [currentItem, setCurrentItem] = useState(activeItem || items[1]);
     const [isHovering, setIsHovering] = useState(false);
-    const { theme, setTheme } = useTheme();
-    
-    const toggleTheme = () => {
-        const newTheme = theme === "light" ? "dark" : "light";
-        setTheme(newTheme);
-    };
 
     const isSecondarySidebarVisible = isHovering && Boolean(currentItem.items?.length);
 
@@ -106,14 +99,6 @@ export const SidebarNavigationSlim = ({ activeUrl, items, footerItems = [], hide
                         <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-error-500"></span>
                     </button>
                     
-                    {/* Theme toggle */}
-                    <button
-                        onClick={toggleTheme}
-                        className="flex items-center justify-center rounded-lg p-2 text-fg-secondary hover:bg-primary_hover hover:text-fg-secondary_hover"
-                        aria-label="Toggle theme"
-                    >
-                        {theme === "light" ? <Moon01 className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
-                    </button>
 
                     <AriaDialogTrigger>
                         <AriaButton
@@ -232,13 +217,6 @@ export const SidebarNavigationSlim = ({ activeUrl, items, footerItems = [], hide
                                 <span>Notifications</span>
                                 {/* Notification dot */}
                                 <span className="absolute top-1.5 left-6 h-2 w-2 rounded-full bg-error-500"></span>
-                            </button>
-                            <button
-                                onClick={toggleTheme}
-                                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-fg-secondary hover:bg-primary_hover hover:text-fg-secondary_hover"
-                            >
-                                {theme === "light" ? <Moon01 className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-                                <span>{theme === "light" ? "Dark Mode" : "Light Mode"}</span>
                             </button>
                         </div>
 

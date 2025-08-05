@@ -60,3 +60,7 @@ input[type="number"] {
 input[type="search"]::-webkit-search-cancel-button {
     -webkit-appearance: none;
 }
+
+button, a, [role="button"], [role="link"] {
+    cursor: pointer;
+}
