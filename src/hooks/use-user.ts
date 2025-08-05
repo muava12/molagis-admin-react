@@ -25,10 +25,7 @@ export const UserProvider = (props: any) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      const user = session?.user ?? null;
-      setUser(user);
+    const fetchUserProfile = async (user: User | null) => {
       if (user) {
         const { data: profileData } = await supabase
           .from('profiles')
@@ -36,29 +33,26 @@ export const UserProvider = (props: any) => {
           .eq('id', user.id)
           .single();
         setProfile(profileData);
+      } else {
+        setProfile(null);
       }
       setLoading(false);
     };
 
-    fetchUser();
+    const initializeUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      const user = session?.user ?? null;
+      setUser(user);
+      await fetchUserProfile(user);
+    };
+
+    initializeUser();
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         const user = session?.user ?? null;
         setUser(user);
-        if (user) {
-          supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', user.id)
-            .single()
-            .then(({ data }) => {
-              setProfile(data);
-              setLoading(false);
-            });
-        } else {
-            setLoading(false);
-        }
+        await fetchUserProfile(user);
       }
     );
 
