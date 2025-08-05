@@ -91,11 +91,11 @@
         font-size: var(--text-xl);
         line-height: var(--text-xl--line-height);
     }
-    &:where(blockquote p:first-of-type::before) {
-        content: open-quote;
+    &:where(blockquote p:first-of-type)::before {
+        content: "“";
     }
-    &:where(blockquote p:last-of-type::after) {
-        content: close-quote;
+    &:where(blockquote p:last-of-type)::after {
+        content: "”";
     }
 
     /* Headings */
