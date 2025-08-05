@@ -1,29 +1,19 @@
-import { Laptop01, Moon01, Sun } from "@untitledui/icons";
+import { Moon01, Sun } from "@untitledui/icons";
 import { useTheme } from "@/providers/theme-provider";
-import { ButtonGroup, ButtonGroupItem } from "@/components/base/button-group/button-group";
+import { Button } from "@/components/base/buttons/button";
 
-export function ThemeSwitcher() {
-    const { theme, setTheme } = useTheme();
+export const ThemeToggle = () => {
+  const { setTheme, theme } = useTheme();
 
-    return (
-        <div className="p-2">
-            <ButtonGroup value={theme} onChange={(value) => setTheme(value as "light" | "dark" | "system")}>
-                <ButtonGroupItem
-                    value="light"
-                    aria-label="Set light theme"
-                    iconLeading={Sun}
-                />
-                <ButtonGroupItem
-                    value="dark"
-                    aria-label="Set dark theme"
-                    iconLeading={Moon01}
-                />
-                <ButtonGroupItem
-                    value="system"
-                    aria-label="Set system theme"
-                    iconLeading={Laptop01}
-                />
-            </ButtonGroup>
-        </div>
-    );
-}
+  return (
+    <Button
+      color="tertiary"
+      size="sm"
+      onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+      aria-label="Toggle theme"
+    >
+      <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+      <Moon01 className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+    </Button>
+  );
+};

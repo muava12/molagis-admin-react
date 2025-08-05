@@ -33,26 +33,26 @@ export function ThemeProvider({
   useEffect(() => {
     const root = window.document.documentElement;
 
-    root.classList.remove("light-mode", "dark-mode");
+    root.classList.remove("light", "dark");
 
     if (theme === "system") {
       const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
         .matches
-        ? "dark-mode"
-        : "light-mode";
+        ? "dark"
+        : "light";
 
       root.classList.add(systemTheme);
       return;
     }
 
-    root.classList.add(theme === "dark" ? "dark-mode" : "light-mode");
+    root.classList.add(theme);
   }, [theme]);
 
   const value = {
     theme,
-    setTheme: (newTheme: Theme) => {
-      localStorage.setItem(storageKey, newTheme);
-      setTheme(newTheme);
+    setTheme: (theme: Theme) => {
+      localStorage.setItem(storageKey, theme);
+      setTheme(theme);
     },
   };
 

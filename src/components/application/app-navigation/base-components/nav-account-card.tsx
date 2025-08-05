@@ -9,7 +9,7 @@ import { AvatarLabelGroup } from "@/components/base/avatar/avatar-label-group";
 import { Button } from "@/components/base/buttons/button";
 import { RadioButtonBase } from "@/components/base/radio-buttons/radio-buttons";
 import { useBreakpoint } from "@/hooks/use-breakpoint";
-import { ThemeSwitcher } from "@/components/theme-toggle";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { cx } from "@/utils/cx";
 
 type NavAccountType = {
@@ -31,7 +31,7 @@ const placeholderAccounts: NavAccountType[] = [
         name: "Olivia Rhye",
         email: "olivia@untitledui.com",
         avatar: "https://www.untitledui.com/images/avatars/olivia-rhye?fm=webp&q=80",
-        status: "online",
+        status: "offline",
     },
     {
         id: "sienna",
@@ -117,7 +117,7 @@ export const NavAccountMenu = ({
             </div>
 
             <div className="border-t border-secondary">
-                <ThemeSwitcher />
+                <ThemeToggle />
             </div>
             <div className="border-t border-secondary pt-1 pb-1.5">
                 <NavAccountCardMenuItem label="Sign out" icon={LogOut01} shortcut="⌥⇧Q" />
