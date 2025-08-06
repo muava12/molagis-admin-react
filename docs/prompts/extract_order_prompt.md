@@ -21,6 +21,13 @@ Dari teks pesanan, ekstrak nilai untuk setiap kunci. Aturan utama:
 
 - **Paket:** Cocokkan nama paket dari input (case-insensitive) dengan `nama` dari daftar paket di Konteks Dinamis. Ambil `id` dan `nama` yang sesuai.
 - **Durasi & Jadwal:** Jika `jadwal_hari` ada, `durasi_hari` **harus** dihitung dari panjang array `jadwal_hari`. Jika tidak, hitung dari `durasi_hari`.
+- **Nama:** Pastikan nama diawali dengan huruf kapital dan setiap kata penting diawali dengan huruf kapital. Misalnya, "budi santoso" harus diubah menjadi "Budi Santoso".
+- **Alamat:**
+  - Singkatan jalan wajib menggunakan "Jl." bukan "jln".
+  - Singkatan gang wajib menggunakan "Gg.".
+  - Hapus kode pos jika alamat berada di kota Samarinda karena tidak diperlukan untuk pengiriman lokal di daerah Samarinda.
+- **Alamat Singkat:** Format alamat singkat adalah versi singkat dari alamat lengkap, misalnya hanya nama jalan dan nama gang.
+- **Nomor Telepon:** Pastikan nomor telepon diawali dengan kode negara. Misalnya, `628123456789` untuk nomor di Indonesia.
 
 ### 2. Validasi dan Buat Output JSON
 Buat output JSON sesuai skema. Jika terjadi error (misalnya paket tidak ditemukan atau field wajib kosong), kembalikan objek JSON kosong.

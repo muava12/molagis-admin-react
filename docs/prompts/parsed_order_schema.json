@@ -2,8 +2,9 @@
     "type": "object",
     "description": "Skema untuk memvalidasi struktur JSON dari data pesanan yang telah diekstrak dari format teks.",
     "properties": {
-        "pelanggan": {
+        "data_penerima": {
             "type": "object",
+            "description": "Skema untuk memvalidasi data pelanggan.",
             "properties": {
                 "nama": {
                     "type": "string",
@@ -26,32 +27,9 @@
                 "telepon"
             ]
         },
-        "pengiriman": {
+        "data_pesanan": {
             "type": "object",
-            "properties": {
-                "alamat": {
-                    "type": "string",
-                    "description": "Alamat lengkap pengiriman. Perbaiki penulisan alamatnya"
-                },
-                "alamat_singkat": {
-                    "type": "string",
-                    "description": "Versi singkat dari alamat untuk kurir."
-                },
-                "catatan_kurir": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
-                    "description": "Catatan khusus untuk kurir."
-                }
-            },
-            "required": [
-                "alamat",
-                "alamat_singkat"
-            ]
-        },
-        "pesanan": {
-            "type": "object",
+            "description": "Skema untuk memvalidasi data pesanan.",
             "properties": {
                 "paket": {
                     "type": "array",
@@ -112,9 +90,6 @@
                             "harga": {
                                 "type": "number",
                                 "description": "Harga item tambahan."
-                            },
-                            "": {
-                                "type": "string"
                             }
                         },
                         "required": [
@@ -127,6 +102,30 @@
                 "paket",
                 "durasi_hari",
                 "jadwal_hari"
+            ]
+        },
+        "pengiriman": {
+            "type": "object",
+            "properties": {
+                "alamat": {
+                    "type": "string",
+                    "description": "Alamat lengkap pengiriman. Perbaiki penulisan alamatnya"
+                },
+                "alamat_singkat": {
+                    "type": "string",
+                    "description": "Versi singkat dari alamat untuk kurir."
+                },
+                "catatan_kurir": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Catatan khusus untuk kurir."
+                }
+            },
+            "required": [
+                "alamat",
+                "alamat_singkat"
             ]
         },
         "pembayaran": {
@@ -148,9 +147,9 @@
         }
     },
     "required": [
-        "pelanggan",
+        "data_penerima",
+        "data_pesanan",
         "pengiriman",
-        "pesanan",
         "pembayaran"
     ]
 }
