@@ -1,0 +1,155 @@
+{
+    "type": "object",
+    "description": "Skema untuk memvalidasi struktur JSON dari data pesanan yang telah diekstrak dari format teks.",
+    "properties": {
+        "data_penerima": {
+            "type": "object",
+            "description": "Skema untuk memvalidasi data pelanggan.",
+            "properties": {
+                "nama": {
+                    "type": "string",
+                    "description": "Nama lengkap pelanggan."
+                },
+                "telepon": {
+                    "type": "string",
+                    "description": "Nomor telepon utama pelanggan."
+                },
+                "telepon_alt": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Nomor telepon alternatif pelanggan."
+                }
+            },
+            "required": [
+                "nama",
+                "telepon"
+            ]
+        },
+        "data_pesanan": {
+            "type": "object",
+            "description": "Skema untuk memvalidasi data pesanan.",
+            "properties": {
+                "paket": {
+                    "type": "array",
+                    "description": "Array dari objek paket yang dipesan.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "description": "ID paket dari database."
+                            },
+                            "nama": {
+                                "type": "string",
+                                "description": "Nama paket yang sesuai dengan ID."
+                            },
+                            "porsi": {
+                                "type": "integer",
+                                "description": "Jumlah porsi untuk paket ini."
+                            }
+                        },
+                        "required": [
+                            "id",
+                            "nama",
+                            "porsi"
+                        ]
+                    }
+                },
+                "durasi_hari": {
+                    "type": "integer",
+                    "description": "Jumlah hari pengiriman.",
+                    "minimum": 1
+                },
+                "jadwal_hari": {
+                    "type": "array",
+                    "description": "List tanggal pengiriman, format YYYY-MM-DD.",
+                    "items": {
+                        "type": "string",
+                        "format": "date"
+                    }
+                },
+                "catatan_dapur": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Catatan untuk dapur, seperti pantangan atau alergi."
+                },
+                "pesanan_tambahan": {
+                    "type": "array",
+                    "description": "List pesanan tambahan di luar paket utama.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "nama_item": {
+                                "type": "string",
+                                "description": "Nama item tambahan yang dipesan."
+                            },
+                            "harga": {
+                                "type": "number",
+                                "description": "Harga item tambahan."
+                            }
+                        },
+                        "required": [
+                            "nama_item"
+                        ]
+                    }
+                }
+            },
+            "required": [
+                "paket",
+                "durasi_hari",
+                "jadwal_hari"
+            ]
+        },
+        "pengiriman": {
+            "type": "object",
+            "properties": {
+                "alamat": {
+                    "type": "string",
+                    "description": "Alamat lengkap pengiriman. Perbaiki penulisan alamatnya"
+                },
+                "alamat_singkat": {
+                    "type": "string",
+                    "description": "Versi singkat dari alamat untuk kurir."
+                },
+                "catatan_kurir": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Catatan khusus untuk kurir."
+                }
+            },
+            "required": [
+                "alamat",
+                "alamat_singkat"
+            ]
+        },
+        "pembayaran": {
+            "type": "object",
+            "properties": {
+                "metode": {
+                    "type": "string",
+                    "description": "Metode pembayaran yang dipilih.",
+                    "enum": [
+                        "transfer",
+                        "cod",
+                        "pending"
+                    ]
+                }
+            },
+            "required": [
+                "metode"
+            ]
+        }
+    },
+    "required": [
+        "data_penerima",
+        "data_pesanan",
+        "pengiriman",
+        "pembayaran"
+    ]
+}
