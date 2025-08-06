@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
-import { FilterLines, Plus, SearchLg, UploadCloud02, Edit01, Trash01, MessageCircle02 } from "@untitledui/icons";
+import { FilterLines, Plus, SearchLg, Edit01, Trash01, MessageCircle02 } from "@untitledui/icons";
 import { EmptyState } from "@/components/application/empty-state/empty-state";
-import { TableCard, TableRowActionsDropdown } from "@/components/application/table/table";
+import { TableCard } from "@/components/application/table/table";
 import { ButtonGroup, ButtonGroupItem } from "@/components/base/button-group/button-group";
 import { Button } from "@/components/base/buttons/button";
+import { PaginationCardDefault } from "@/components/application/pagination/pagination";
 import { Input } from "@/components/base/input/input";
 import { ModalOverlay, Modal, Dialog } from "@/components/application/modals/modal";
 import { TextArea } from "@/components/base/textarea/textarea";
@@ -255,8 +256,210 @@ export const CustomersPage = () => {
         });
     }, []);
 
+    // Render mobile card view
+    const renderMobileCards = () => (
+        <div className="space-y-3 p-4">
+            {paginatedData.data.map((customer) => (
+                <div key={customer.id} className="bg-secondary rounded-lg p-4 shadow-sm">
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <div className="flex items-center gap-2">
+                                <h3 className="text-md font-semibold text-primary">{customer.nama}</h3>
+                                {(customer as any).hasActiveOrders && (
+                                    <div className="w-2 h-2 bg-success-500 rounded-full" title="Has active orders"></div>
+                                )}
+                            </div>
+                            <p className="text-sm text-tertiary mt-1 max-w-xs truncate">{customer.alamat}</p>
+                        </div>
+                        <div className="flex gap-2">
+                            <Button size="sm" color="secondary" onClick={() => handleOpenModal(customer)} iconLeading={Edit01} />
+                            <Button size="sm" color="tertiary-destructive" onClick={() => handleDelete(customer.id)} iconLeading={Trash01} />
+                        </div>
+                    </div>
+                    <div className="mt-3 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            {customer.telepon && (
+                                <a href={createWhatsAppLink(customer.telepon)} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-7 h-7 bg-success-500 hover:bg-success-600 rounded-full transition-colors" title={`WhatsApp: ${customer.telepon}`}>
+                                    <MessageCircle02 className="size-4 text-white" />
+                                </a>
+                            )}
+                            {customer.telepon_alt && (
+                                <a href={createWhatsAppLink(customer.telepon_alt)} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-7 h-7 bg-success-400 hover:bg-success-500 rounded-full transition-colors" title={`WhatsApp Alt: ${customer.telepon_alt}`}>
+                                    <MessageCircle02 className="size-4 text-white" />
+                                </a>
+                            )}
+                            {customer.telepon_pemesan && (
+                                <a href={createWhatsAppLink(customer.telepon_pemesan)} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-7 h-7 bg-primary-500 hover:bg-primary-600 rounded-full transition-colors" title={`WhatsApp Pemesan: ${customer.telepon_pemesan}`}>
+                                    <MessageCircle02 className="size-4 text-white" />
+                                </a>
+                            )}
+                        </div>
+                        <span className="text-sm font-medium text-primary">{formatCurrency(customer.ongkir)}</span>
+                    </div>
+                    {customer.maps && (
+                        <a href={customer.maps} target="_blank" rel="noopener noreferrer" className="text-brand-600 hover:text-brand-800 text-xs mt-2 inline-block">
+                            View Map →
+                        </a>
+                    )}
+                </div>
+            ))}
+        </div>
+    );
+
     // Render table content with proper structure
-    const renderTableContent = () => {
+    const renderDesktopTable = () => (
+        <div className="overflow-x-auto">
+            <table className="w-full">
+                <thead className="bg-secondary border-b border-secondary">
+                    <tr>
+                        <th
+                            className="px-6 py-3 text-left text-xs font-semibold text-quaternary cursor-pointer hover:text-tertiary"
+                            onClick={() => handleSort('nama')}
+                        >
+                            <div className="flex items-center gap-1">
+                                Name
+                                {sortBy === 'nama' && (
+                                    <span className={`text-xs ${sortOrder === 'asc' ? 'rotate-0' : 'rotate-180'}`}>↑</span>
+                                )}
+                            </div>
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-quaternary">
+                            Contact
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-quaternary">
+                            Address
+                        </th>
+                        <th
+                            className="px-6 py-3 text-left text-xs font-semibold text-quaternary cursor-pointer hover:text-tertiary"
+                            onClick={() => handleSort('date_created')}
+                        >
+                            <div className="flex items-center gap-1">
+                                Created Date
+                                {sortBy === 'date_created' && (
+                                    <span className={`text-xs ${sortOrder === 'asc' ? 'rotate-0' : 'rotate-180'}`}>↑</span>
+                                )}
+                            </div>
+                        </th>
+                        <th
+                            className="px-6 py-3 text-left text-xs font-semibold text-quaternary cursor-pointer hover:text-tertiary"
+                            onClick={() => handleSort('ongkir')}
+                        >
+                            <div className="flex items-center gap-1">
+                                Shipping Cost
+                                {sortBy === 'ongkir' && (
+                                    <span className={`text-xs ${sortOrder === 'asc' ? 'rotate-0' : 'rotate-180'}`}>↑</span>
+                                )}
+                            </div>
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-quaternary">
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody className="divide-y divide-secondary">
+                    {paginatedData.data.map((customer) => (
+                        <tr key={customer.id} className="hover:bg-secondary transition-colors">
+                            <td className="px-6 py-4">
+                                <div className="flex items-center gap-2">
+                                    <div className="text-sm font-medium text-primary">
+                                        {customer.nama}
+                                    </div>
+                                    {(customer as any).hasActiveOrders && (
+                                        <div className="flex items-center justify-center w-2 h-2 bg-success-500 rounded-full" title="Has active orders">
+                                        </div>
+                                    )}
+                                </div>
+                            </td>
+                            <td className="px-6 py-4">
+                                <div className="flex items-center gap-2">
+                                    {customer.telepon && (
+                                        <a
+                                            href={createWhatsAppLink(customer.telepon)}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center justify-center w-8 h-8 bg-success-500 hover:bg-success-600 rounded-full transition-colors"
+                                            title={`WhatsApp: ${customer.telepon}`}
+                                        >
+                                            <MessageCircle02 className="size-4 text-white" />
+                                        </a>
+                                    )}
+                                    {customer.telepon_alt && (
+                                        <a
+                                            href={createWhatsAppLink(customer.telepon_alt)}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center justify-center w-8 h-8 bg-success-400 hover:bg-success-500 rounded-full transition-colors"
+                                            title={`WhatsApp Alt: ${customer.telepon_alt}`}
+                                        >
+                                            <MessageCircle02 className="size-4 text-white" />
+                                        </a>
+                                    )}
+                                    {customer.telepon_pemesan && (
+                                        <a
+                                            href={createWhatsAppLink(customer.telepon_pemesan)}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center justify-center w-8 h-8 bg-primary-500 hover:bg-primary-600 rounded-full transition-colors"
+                                            title={`WhatsApp Pemesan: ${customer.telepon_pemesan}`}
+                                        >
+                                            <MessageCircle02 className="size-4 text-white" />
+                                        </a>
+                                    )}
+                                </div>
+                            </td>
+                            <td className="px-6 py-4">
+                                <div className="text-sm text-tertiary">
+                                    {customer.alamat && (
+                                        <div className="max-w-xs truncate">
+                                            {customer.alamat}
+                                        </div>
+                                    )}
+                                    {customer.maps && (
+                                        <a
+                                            href={customer.maps}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-brand-600 hover:text-brand-800 text-xs"
+                                        >
+                                            View Map →
+                                        </a>
+                                    )}
+                                </div>
+                            </td>
+                            <td className="px-6 py-4">
+                                <span className="text-sm text-tertiary">
+                                    {formatDate(customer.date_created)}
+                                </span>
+                            </td>
+                            <td className="px-6 py-4">
+                                <span className="text-primary">
+                                    {formatCurrency(customer.ongkir)}
+                                </span>
+                            </td>
+                            <td className="px-6 py-4">
+                                <div className="flex items-center gap-2">
+                                    <Button
+                                        size="sm"
+                                        color="secondary"
+                                        onClick={() => handleOpenModal(customer)}
+                                        iconLeading={Edit01}
+                                    />
+                                    <Button
+                                        size="sm"
+                                        color="tertiary-destructive"
+                                        onClick={() => handleDelete(customer.id)}
+                                        iconLeading={Trash01}
+                                    />
+                                </div>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    );
+
+    const renderContent = () => {
         if (loading && paginatedData.data.length === 0) {
             return (
                 <div className="flex items-center justify-center overflow-hidden px-8 pt-10 pb-12">
@@ -281,7 +484,7 @@ export const CustomersPage = () => {
                         <EmptyState.Content>
                             <EmptyState.Title>No customers found</EmptyState.Title>
                             <EmptyState.Description>
-                                {searchQuery 
+                                {searchQuery
                                     ? `Your search "${searchQuery}" did not match any customers. Please try again or add a new customer.`
                                     : "You haven't added any customers yet. Create your first customer to get started."
                                 }
@@ -304,155 +507,10 @@ export const CustomersPage = () => {
         }
 
         return (
-            <div className="overflow-x-auto">
-                <table className="w-full">
-                    <thead className="bg-secondary border-b border-secondary">
-                        <tr>
-                            <th 
-                                className="px-6 py-3 text-left text-xs font-semibold text-quaternary cursor-pointer hover:text-tertiary"
-                                onClick={() => handleSort('nama')}
-                            >
-                                <div className="flex items-center gap-1">
-                                    Name
-                                    {sortBy === 'nama' && (
-                                        <span className={`text-xs ${sortOrder === 'asc' ? 'rotate-0' : 'rotate-180'}`}>↑</span>
-                                    )}
-                                </div>
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-semibold text-quaternary">
-                                Contact
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-semibold text-quaternary">
-                                Address
-                            </th>
-                            <th
-                                className="px-6 py-3 text-left text-xs font-semibold text-quaternary cursor-pointer hover:text-tertiary"
-                                onClick={() => handleSort('date_created')}
-                            >
-                                <div className="flex items-center gap-1">
-                                    Created Date
-                                    {sortBy === 'date_created' && (
-                                        <span className={`text-xs ${sortOrder === 'asc' ? 'rotate-0' : 'rotate-180'}`}>↑</span>
-                                    )}
-                                </div>
-                            </th>
-                            <th
-                                className="px-6 py-3 text-left text-xs font-semibold text-quaternary cursor-pointer hover:text-tertiary"
-                                onClick={() => handleSort('ongkir')}
-                            >
-                                <div className="flex items-center gap-1">
-                                    Shipping Cost
-                                    {sortBy === 'ongkir' && (
-                                        <span className={`text-xs ${sortOrder === 'asc' ? 'rotate-0' : 'rotate-180'}`}>↑</span>
-                                    )}
-                                </div>
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-semibold text-quaternary">
-                                Actions
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-secondary">
-                        {paginatedData.data.map((customer) => (
-                            <tr key={customer.id} className="hover:bg-secondary transition-colors">
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center gap-2">
-                                        <div className="text-sm font-medium text-primary">
-                                            {customer.nama}
-                                        </div>
-                                        {(customer as any).hasActiveOrders && (
-                                            <div className="flex items-center justify-center w-2 h-2 bg-success-500 rounded-full" title="Has active orders">
-                                            </div>
-                                        )}
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center gap-2">
-                                        {customer.telepon && (
-                                            <a
-                                                href={createWhatsAppLink(customer.telepon)}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="flex items-center justify-center w-8 h-8 bg-success-500 hover:bg-success-600 rounded-full transition-colors"
-                                                title={`WhatsApp: ${customer.telepon}`}
-                                            >
-                                                <MessageCircle02 className="size-4 text-white" />
-                                            </a>
-                                        )}
-                                        {customer.telepon_alt && (
-                                            <a
-                                                href={createWhatsAppLink(customer.telepon_alt)}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="flex items-center justify-center w-8 h-8 bg-success-400 hover:bg-success-500 rounded-full transition-colors"
-                                                title={`WhatsApp Alt: ${customer.telepon_alt}`}
-                                            >
-                                                <MessageCircle02 className="size-4 text-white" />
-                                            </a>
-                                        )}
-                                        {customer.telepon_pemesan && (
-                                            <a
-                                                href={createWhatsAppLink(customer.telepon_pemesan)}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="flex items-center justify-center w-8 h-8 bg-primary-500 hover:bg-primary-600 rounded-full transition-colors"
-                                                title={`WhatsApp Pemesan: ${customer.telepon_pemesan}`}
-                                            >
-                                                <MessageCircle02 className="size-4 text-white" />
-                                            </a>
-                                        )}
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <div className="text-sm text-tertiary">
-                                        {customer.alamat && (
-                                            <div className="max-w-xs truncate">
-                                                {customer.alamat}
-                                            </div>
-                                        )}
-                                        {customer.maps && (
-                                            <a
-                                                href={customer.maps}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-brand-600 hover:text-brand-800 text-xs"
-                                            >
-                                                View Map →
-                                            </a>
-                                        )}
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <span className="text-sm text-tertiary">
-                                        {formatDate(customer.date_created)}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <span className="text-primary">
-                                        {formatCurrency(customer.ongkir)}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center gap-2">
-                                        <Button
-                                            size="sm"
-                                            color="secondary"
-                                            onClick={() => handleOpenModal(customer)}
-                                            iconLeading={Edit01}
-                                        />
-                                        <Button
-                                            size="sm"
-                                            color="tertiary-destructive"
-                                            onClick={() => handleDelete(customer.id)}
-                                            iconLeading={Trash01}
-                                        />
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+            <>
+                <div className="hidden md:block">{renderDesktopTable()}</div>
+                <div className="block md:hidden">{renderMobileCards()}</div>
+            </>
         );
     };
 
@@ -463,42 +521,35 @@ export const CustomersPage = () => {
                 badge={`${paginatedData.total} customers`}
                 description="Keep track of customers and their information."
                 contentTrailing={
-                    <>
-                        <div className="flex gap-3 md:pr-9">
-                            <Button color="secondary" size="md" iconLeading={UploadCloud02}>
-                                Import
-                            </Button>
-                            <Button size="md" iconLeading={Plus} onClick={() => handleOpenModal()}>
-                                Add customer
-                            </Button>
-                        </div>
-                        <div className="absolute top-5 right-4 md:right-6">
-                            <TableRowActionsDropdown />
-                        </div>
-                    </>
+                    <div className="flex gap-3">
+                        <Button size="md" iconLeading={Plus} onClick={() => handleOpenModal()}>
+                            Add customer
+                        </Button>
+                    </div>
                 }
             />
 
-            <div className="flex justify-between gap-4 border-b border-secondary px-4 py-3 md:px-6">
-                <ButtonGroup defaultSelectedKeys={[filter]} onSelectionChange={(keys) => {
-                    const selectedKey = Array.from(keys)[0] as "all" | "active" | "inactive";
-                    handleFilterChange(selectedKey);
-                }}>
-                    <ButtonGroupItem id="all">View all</ButtonGroupItem>
-                    <ButtonGroupItem id="active">Active</ButtonGroupItem>
-                    <ButtonGroupItem id="inactive">Inactive</ButtonGroupItem>
-                </ButtonGroup>
-
-                <div className="hidden gap-3 md:flex">
-                    <Input 
-                        icon={SearchLg} 
-                        aria-label="Search" 
-                        placeholder="Search customers..." 
-                        className="w-70"
+            <div className="flex flex-col md:flex-row justify-between gap-4 border-b border-secondary px-4 py-3 md:px-6">
+                <div className="flex-1">
+                    <Input
+                        icon={SearchLg}
+                        aria-label="Search"
+                        placeholder="Search customers..."
+                        className="w-full md:w-70"
                         value={searchQuery}
                         onChange={setSearchQuery}
                     />
-                    <Button size="md" color="secondary" iconLeading={FilterLines}>
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                    <ButtonGroup defaultSelectedKeys={[filter]} onSelectionChange={(keys) => {
+                        const selectedKey = Array.from(keys)[0] as "all" | "active" | "inactive";
+                        handleFilterChange(selectedKey);
+                    }}>
+                        <ButtonGroupItem id="all">View all</ButtonGroupItem>
+                        <ButtonGroupItem id="active">Active</ButtonGroupItem>
+                        <ButtonGroupItem id="inactive">Inactive</ButtonGroupItem>
+                    </ButtonGroup>
+                    <Button size="md" color="secondary" iconLeading={FilterLines} className="hidden md:flex">
                         Filters
                     </Button>
                 </div>
@@ -516,32 +567,14 @@ export const CustomersPage = () => {
                 </div>
             )}
 
-            {renderTableContent()}
+            {renderContent()}
 
             {paginatedData.totalPages > 1 && (
-                <div className="flex items-center justify-between border-t border-secondary px-6 pt-3 pb-4">
-                    <span className="text-sm text-tertiary">
-                        Page {paginatedData.page} of {paginatedData.totalPages}
-                    </span>
-                    <div className="flex gap-3">
-                        <Button 
-                            color="secondary" 
-                            size="sm"
-                            onClick={() => handlePageChange(paginatedData.page - 1)}
-                            isDisabled={paginatedData.page <= 1}
-                        >
-                            Previous
-                        </Button>
-                        <Button 
-                            color="secondary" 
-                            size="sm"
-                            onClick={() => handlePageChange(paginatedData.page + 1)}
-                            isDisabled={paginatedData.page >= paginatedData.totalPages}
-                        >
-                            Next
-                        </Button>
-                    </div>
-                </div>
+                <PaginationCardDefault
+                    page={currentPage}
+                    total={paginatedData.totalPages}
+                    onPageChange={handlePageChange}
+                />
             )}
 
             {/* Customer Form Modal */}

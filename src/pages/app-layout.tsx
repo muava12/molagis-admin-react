@@ -17,27 +17,27 @@ import { BadgeWithDot } from "@/components/base/badges/badges";
 const appNavItems: (NavItemType & { icon: React.FC<{ className?: string }> })[] = [
   {
     label: "Dashboard",
-    href: "/app/dashboard",
+    href: "/dashboard",
     icon: BarChartSquare02,
   },
   {
     label: "Customers",
-    href: "/app/customers",
+    href: "/customers",
     icon: Users01,
   },
   {
     label: "Orders",
-    href: "/app/orders",
+    href: "/orders",
     icon: Rows01,
   },
   {
     label: "Finance",
-    href: "/app/finance",
+    href: "/finance",
     icon: PieChart03,
   },
   {
     label: "Reports",
-    href: "/app/reports",
+    href: "/reports",
     icon: File05,
   },
   {
@@ -50,12 +50,12 @@ const appNavItems: (NavItemType & { icon: React.FC<{ className?: string }> })[] 
 const appFooterItems: (NavItemType & { icon: React.FC<{ className?: string }> })[] = [
   {
     label: "Support",
-    href: "/app/support",
+    href: "/support",
     icon: LifeBuoy01,
   },
   {
     label: "Settings",
-    href: "/app/settings",
+    href: "/settings",
     icon: Settings01,
     badge: <BadgeWithDot color="success" type="modern" size="sm">Online</BadgeWithDot>,
   },

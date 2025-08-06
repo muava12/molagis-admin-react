@@ -20,7 +20,8 @@ function App() {
         <Route path="/development" element={<DevelopmentPage />} />
         
         {/* Protected app routes */}
-        <Route path="/app" element={<AppLayout />}>
+        {/* Protected app routes */}
+        <Route path="/" element={<AppLayout />}>
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="customers" element={<CustomersPage />} />
           <Route path="orders" element={<OrdersPage />} />

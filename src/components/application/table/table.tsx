@@ -83,7 +83,7 @@ const TableCardHeader = ({ title, badge, description, contentTrailing, className
         >
             <div className="flex flex-1 flex-col gap-0.5">
                 <div className="flex items-center gap-2">
-                    <h2 className={cx("font-semibold text-primary", size === "sm" ? "text-md" : "text-lg")}>{title}</h2>
+                    <h2 className={cx("font-semibold text-primary", size === "sm" ? "text-sm" : "text-lg")}>{title}</h2>
                     {badge ? (
                         isValidElement(badge) ? (
                             badge
@@ -260,8 +260,8 @@ const TableCell = ({ className, children, ...props }: TableCellProps) => {
             className={(state) =>
                 cx(
                     "relative text-sm text-tertiary outline-focus-ring focus-visible:z-1 focus-visible:outline-2 focus-visible:-outline-offset-2",
-                    size === "sm" && "px-5 py-3",
-                    size === "md" && "px-6 py-4",
+                    size === "sm" && "px-6 py-4",
+                    size === "md" && "px-8 py-5",
 
                     selectionBehavior === "toggle" && "nth-2:pl-3",
 
