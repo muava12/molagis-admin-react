@@ -37,7 +37,7 @@ export const DevelopmentPage = () => {
                 <Input
                   id="test-input"
                   value={inputValue}
-                  onChange={(e: any) => setInputValue(e.target.value)}
+                  onChange={setInputValue}
                   placeholder="Type something..."
                 />
               </div>
