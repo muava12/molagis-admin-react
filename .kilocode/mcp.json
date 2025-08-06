@@ -19,7 +19,8 @@
         "get_file_info",
         "list_allowed_directories",
         "read_file",
-        "create_directory"
+        "create_directory",
+        "write_file"
       ]
     },
     "supabase-admin-catering": {

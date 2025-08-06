@@ -1,0 +1,128 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Skema Data Pesanan yang Diparsing",
+    "type": "object",
+    "description": "Skema untuk memvalidasi struktur JSON dari data pesanan yang telah diekstrak dari format teks.",
+    "properties": {
+        "pelanggan": {
+            "type": "object",
+            "properties": {
+                "nama": {
+                    "type": "string",
+                    "description": "Nama lengkap pelanggan."
+                },
+                "telepon": {
+                    "type": "string",
+                    "description": "Nomor telepon utama pelanggan."
+                },
+                "telepon_alt": {
+                    "type": ["string", "null"],
+                    "description": "Nomor telepon alternatif pelanggan."
+                }
+            },
+            "required": [
+                "nama",
+                "telepon"
+            ]
+        },
+        "pengiriman": {
+            "type": "object",
+            "properties": {
+                "alamat": {
+                    "type": "string",
+                    "description": "Alamat lengkap pengiriman."
+                },
+                "alamat_singkat": {
+                    "type": ["string", "null"],
+                    "description": "Versi singkat dari alamat untuk kurir."
+                },
+                "catatan_kurir": {
+                    "type": ["string", "null"],
+                    "description": "Catatan khusus untuk kurir."
+                }
+            },
+            "required": [
+                "alamat"
+            ]
+        },
+        "pesanan": {
+            "type": "object",
+            "properties": {
+                "paket": {
+                    "type": "string",
+                    "description": "Jenis paket yang dipesan (misalnya, 'Single', 'Family')."
+                },
+                "porsi": {
+                    "type": "integer",
+                    "description": "Jumlah porsi per pengiriman.",
+                    "minimum": 1
+                },
+                "durasi_hari": {
+                    "type": "integer",
+                    "description": "Jumlah hari pengiriman.",
+                    "minimum": 1
+                },
+                "jadwal_hari": {
+                    "type": "array",
+                    "description": "List tanggal pengiriman, format YYYY-MM-DD.",
+                    "items": {
+                        "type": "string",
+                        "format": "date"
+                    }
+                },
+                "catatan_dapur": {
+                    "type": ["string", "null"],
+                    "description": "Catatan untuk dapur, seperti pantangan atau alergi.",
+                    "default": null
+                },
+                "pesanan_tambahan": {
+                    "type": "array",
+                    "description": "List pesanan tambahan di luar paket utama.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "nama_item": {
+                                "type": "string",
+                                "description": "Nama item tambahan yang dipesan."
+                            },
+                            "harga": {
+                                "type": "number",
+                                "description": "Harga item tambahan."
+                            }
+                        },
+                        "required": ["nama_item"]
+                    }
+                }
+            },
+            "required": [
+                "paket",
+                "porsi",
+                "durasi_hari",
+                "jadwal_hari"
+            ]
+        },
+        "pembayaran": {
+            "type": "object",
+            "properties": {
+                "metode": {
+                    "type": "string",
+                    "description": "Metode pembayaran yang dipilih.",
+                    "enum": [
+                        "transfer",
+                        "cod",
+                        "pending"
+                    ]
+                }
+            },
+            "required": [
+                "metode"
+            ]
+        }
+    },
+    "required": [
+        "pelanggan",
+        "pengiriman",
+        "pesanan",
+        "pembayaran"
+    ]
+}
