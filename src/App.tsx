@@ -38,14 +38,15 @@ function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/development" element={<DevelopmentPage />} />
       <Route path="/demo" element={<DevelopmentPage />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-      
-      {/* Protected app routes */}
-      <Route path="/app" element={
-        <ProtectedRoute>
-          <AppLayout />
-        </ProtectedRoute>
-      }>
+
+      {/* Protected app routes using a layout route */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <AppLayout />
+          </ProtectedRoute>
+        }
+      >
         <Route path="dashboard" element={<DashboardPage />} />
         <Route path="customers" element={<CustomersPage />} />
         <Route path="orders" element={<OrdersPage />} />
@@ -53,9 +54,9 @@ function AppRoutes() {
         <Route path="reports" element={<ReportsPage />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>
-      
-      {/* Redirect /dashboard to /app/dashboard for convenience */}
-      <Route path="/dashboard" element={<Navigate to="/app/dashboard" replace />} />
+
+      {/* Catch-all route should be last */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
