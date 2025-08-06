@@ -1,6 +1,4 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "Skema Data Pesanan yang Diparsing",
     "type": "object",
     "description": "Skema untuk memvalidasi struktur JSON dari data pesanan yang telah diekstrak dari format teks.",
     "properties": {
@@ -16,7 +14,10 @@
                     "description": "Nomor telepon utama pelanggan."
                 },
                 "telepon_alt": {
-                    "type": ["string", "null"],
+                    "type": [
+                        "string",
+                        "null"
+                    ],
                     "description": "Nomor telepon alternatif pelanggan."
                 }
             },
@@ -30,32 +31,53 @@
             "properties": {
                 "alamat": {
                     "type": "string",
-                    "description": "Alamat lengkap pengiriman."
+                    "description": "Alamat lengkap pengiriman. Perbaiki penulisan alamatnya"
                 },
                 "alamat_singkat": {
-                    "type": ["string", "null"],
+                    "type": "string",
                     "description": "Versi singkat dari alamat untuk kurir."
                 },
                 "catatan_kurir": {
-                    "type": ["string", "null"],
+                    "type": [
+                        "string",
+                        "null"
+                    ],
                     "description": "Catatan khusus untuk kurir."
                 }
             },
             "required": [
-                "alamat"
+                "alamat",
+                "alamat_singkat"
             ]
         },
         "pesanan": {
             "type": "object",
             "properties": {
                 "paket": {
-                    "type": "string",
-                    "description": "Jenis paket yang dipesan (misalnya, 'Single', 'Family')."
-                },
-                "porsi": {
-                    "type": "integer",
-                    "description": "Jumlah porsi per pengiriman.",
-                    "minimum": 1
+                    "type": "array",
+                    "description": "Array dari objek paket yang dipesan.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "description": "ID paket dari database."
+                            },
+                            "nama": {
+                                "type": "string",
+                                "description": "Nama paket yang sesuai dengan ID."
+                            },
+                            "porsi": {
+                                "type": "integer",
+                                "description": "Jumlah porsi untuk paket ini."
+                            }
+                        },
+                        "required": [
+                            "id",
+                            "nama",
+                            "porsi"
+                        ]
+                    }
                 },
                 "durasi_hari": {
                     "type": "integer",
@@ -71,9 +93,11 @@
                     }
                 },
                 "catatan_dapur": {
-                    "type": ["string", "null"],
-                    "description": "Catatan untuk dapur, seperti pantangan atau alergi.",
-                    "default": null
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Catatan untuk dapur, seperti pantangan atau alergi."
                 },
                 "pesanan_tambahan": {
                     "type": "array",
@@ -88,15 +112,19 @@
                             "harga": {
                                 "type": "number",
                                 "description": "Harga item tambahan."
+                            },
+                            "": {
+                                "type": "string"
                             }
                         },
-                        "required": ["nama_item"]
+                        "required": [
+                            "nama_item"
+                        ]
                     }
                 }
             },
             "required": [
                 "paket",
-                "porsi",
                 "durasi_hari",
                 "jadwal_hari"
             ]
