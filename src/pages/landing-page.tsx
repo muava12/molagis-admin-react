@@ -1,12 +1,18 @@
 import { Button } from "@/components/base/buttons/button";
 import { UntitledLogo } from "@/components/foundations/logo/untitledui-logo";
 import { useNavigate } from "react-router-dom";
+import { useSupabase } from "@/providers/supabase-provider";
 
 export const LandingPage = () => {
   const navigate = useNavigate();
+  const { user } = useSupabase();
 
   const handleLoginClick = () => {
     navigate("/login");
+  };
+
+  const handleDashboardClick = () => {
+    navigate("/app/dashboard");
   };
 
   return (
@@ -38,9 +44,15 @@ export const LandingPage = () => {
             <a href="#" className="text-sm font-semibold leading-6 text-fg-primary">Documentation</a>
           </div>
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            <Button color="secondary" onClick={handleLoginClick}>
-              Log in
-            </Button>
+            {user ? (
+              <Button color="secondary" onClick={handleDashboardClick}>
+                Dashboard
+              </Button>
+            ) : (
+              <Button color="secondary" onClick={handleLoginClick}>
+                Log in
+              </Button>
+            )}
           </div>
         </nav>
       </header>
@@ -69,8 +81,8 @@ export const LandingPage = () => {
               Molagis is a comprehensive business management platform that helps you streamline operations, track finances, and grow your business efficiently.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
-              <Button size="lg" onClick={handleLoginClick}>
-                Get started
+              <Button size="lg" onClick={user ? handleDashboardClick : handleLoginClick}>
+                {user ? "Go to Dashboard" : "Get started"}
               </Button>
               <a href="#" className="text-sm font-semibold leading-6 text-fg-primary">
                 Learn more <span aria-hidden="true">→</span>

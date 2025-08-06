@@ -10,6 +10,8 @@ import { Button } from "@/components/base/buttons/button";
 import { RadioButtonBase } from "@/components/base/radio-buttons/radio-buttons";
 import { useBreakpoint } from "@/hooks/use-breakpoint";
 import { cx } from "@/utils/cx";
+import { useSupabase } from "@/providers/supabase-provider";
+import { useNavigate } from "react-router-dom";
 
 type NavAccountType = {
     /** Unique identifier for the nav item. */
@@ -48,6 +50,16 @@ export const NavAccountMenu = ({
 }: AriaDialogProps & { className?: string; accounts?: NavAccountType[]; selectedAccountId?: string }) => {
     const focusManager = useFocusManager();
     const dialogRef = useRef<HTMLDivElement>(null);
+    const { signOut, user } = useSupabase();
+    const navigate = useNavigate();
+
+    // Get user email from Supabase auth
+    const userEmail = user?.email || "user@example.com";
+
+    const handleSignOut = async () => {
+        await signOut();
+        navigate("/");
+    };
 
     const onKeyDown = useCallback(
         (e: KeyboardEvent) => {
@@ -92,19 +104,18 @@ export const NavAccountMenu = ({
                     <div className="px-3 pt-1.5 pb-1 text-xs font-semibold text-tertiary">Switch account</div>
 
                     <div className="flex flex-col gap-0.5 px-1.5">
-                        {placeholderAccounts.map((account) => (
-                            <button
-                                key={account.id}
-                                className={cx(
-                                    "relative w-full cursor-pointer rounded-md px-2 py-1.5 text-left outline-focus-ring hover:bg-primary_hover focus:z-10 focus-visible:outline-2 focus-visible:outline-offset-2",
-                                    account.id === selectedAccountId && "bg-primary_hover",
-                                )}
-                            >
-                                <AvatarLabelGroup status="online" size="md" src={account.avatar} title={account.name} subtitle={account.email} />
-
-                                <RadioButtonBase isSelected={account.id === selectedAccountId} className="absolute top-2 right-2" />
-                            </button>
-                        ))}
+                        <button
+                            className="relative w-full cursor-pointer rounded-md px-2 py-1.5 text-left outline-focus-ring hover:bg-primary_hover focus:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 bg-primary_hover"
+                        >
+                            <AvatarLabelGroup 
+                                status="online" 
+                                size="md" 
+                                src={placeholderAccounts[0].avatar} 
+                                title={user?.user_metadata?.full_name || "Current User"} 
+                                subtitle={userEmail} 
+                            />
+                            <RadioButtonBase isSelected={true} className="absolute top-2 right-2" />
+                        </button>
                     </div>
                 </div>
                 <div className="flex flex-col gap-2 px-2 pt-0.5 pb-2">
@@ -115,7 +126,7 @@ export const NavAccountMenu = ({
             </div>
 
             <div className="pt-1 pb-1.5">
-                <NavAccountCardMenuItem label="Sign out" icon={LogOut01} shortcut="⌥⇧Q" />
+                <NavAccountCardMenuItem label="Sign out" icon={LogOut01} shortcut="⌥⇧Q" onClick={handleSignOut} />
             </div>
         </AriaDialog>
     );
